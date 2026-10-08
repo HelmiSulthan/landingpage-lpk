@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\FacilityController;
 use App\Http\Controllers\Admin\ProgramController;
 use App\Http\Controllers\Admin\GraduateController;
+use App\Http\Controllers\LandingController;
 
 Route::get('/', [LandingController::class, 'index']);
 

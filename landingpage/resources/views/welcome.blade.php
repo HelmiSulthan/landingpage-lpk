@@ -502,8 +502,8 @@
     <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container">
 
-            <a class="navbar-brand" href="#">
-                SAKURA<span>INDONESIA</span>
+            <a class="navbar-brand" href="#beranda">
+                {{ $setting->site_name ?? 'SAKURA INDONESIA' }}
             </a>
 
             <button class="navbar-toggler"
@@ -562,11 +562,11 @@
                 </div>
 
                 <h1>
-                    {{ $setting->hero_title }}
+                    {{ $setting->hero_title ?? 'Pelatihan Kerja ke Jepang' }}
                 </h1>
 
                 <p>
-                    {{ $setting->hero_description }}
+                    {{ $setting->hero_description ?? 'Mempersiapkan generasi muda Indonesia untuk bekerja di Jepang.' }}
                 </p>
 
                 <div class="hero-buttons">
@@ -614,12 +614,8 @@
                         Membentuk SDM Indonesia yang Siap Bersaing
                     </h2>
 
-                    <p>
-                        {{ $setting->profile }}
-                    </p>
-
-                    <p>
-                        {{ $setting->profile }}
+                    <p class="profile-text">
+                        {{ $setting->profile ?? 'Profil lembaga belum tersedia.' }}
                     </p>
 
                     <ul class="profile-list">
@@ -689,7 +685,7 @@
                         </h3>
 
                         <p>
-                            {{ $setting->mission }}
+                            {{ $setting->vision ?? 'Visi belum tersedia.' }}
                         </p>
 
                     </div>
@@ -706,41 +702,12 @@
                         </h3>
 
                         <div class="mission-item">
-
-                            <div class="mission-number">01</div>
-
-                            <p>
-                                {{ $setting->mission }}
-                            </p>
-
-                        </div>
-
-                        <div class="mission-item">
-
-                            <div class="mission-number">02</div>
+                            <div class="mission-number">
+                                01
+                            </div>
 
                             <p>
-                                {{ $setting->mission }}
-                            </p>
-
-                        </div>
-
-                        <div class="mission-item">
-
-                            <div class="mission-number">03</div>
-
-                            <p>
-                                {{ $setting->mission }}
-                            </p>
-
-                        </div>
-
-                        <div class="mission-item">
-
-                            <div class="mission-number">04</div>
-
-                            <p>
-                                {{ $setting->mission }}
+                                {!! nl2br(e($setting->mission ?? 'Misi belum tersedia.')) !!}
                             </p>
                         </div>
 
@@ -780,147 +747,43 @@
 
             <div class="row g-4">
 
-                <div class="col-md-6 col-lg-4">
-
-                    <div class="facility-card">
-
-                        <div class="facility-icon">
-                            <i class="bi bi-building"></i>
-                        </div>
-
-                        @foreach($facilities as $facility)
-
-                        <div class="facility-card">
-
-                            <div class="facility-icon">
-                                <i class="{{ $facility->icon }}"></i>
-                            </div>
-
-                            <h4>
-                                {{ $facility->name }}
-                            </h4>
-
-                            <p>
-                                {{ $facility->description }}
-                            </p>
-
-                        </div>
-
-                        @endforeach
-
-                    </div>
-
-                </div>
-
+                @forelse($facilities as $facility)
 
                 <div class="col-md-6 col-lg-4">
 
                     <div class="facility-card">
 
                         <div class="facility-icon">
-                            <i class="bi bi-translate"></i>
+
+                            <i class="{{ $facility->icon ?? 'bi bi-building' }}"></i>
+
                         </div>
 
                         <h4>
-                            Laboratorium Bahasa
+                            {{ $facility->name }}
                         </h4>
 
                         <p>
-                            Fasilitas pembelajaran bahasa Jepang untuk
-                            meningkatkan kemampuan komunikasi peserta.
+                            {{ $facility->description }}
                         </p>
 
                     </div>
 
                 </div>
 
+                @empty
 
-                <div class="col-md-6 col-lg-4">
+                <div class="col-12">
 
-                    <div class="facility-card">
-
-                        <div class="facility-icon">
-                            <i class="bi bi-person-workspace"></i>
-                        </div>
-
-                        <h4>
-                            Area Praktik
-                        </h4>
-
-                        <p>
-                            Area praktik untuk membekali peserta dengan
-                            pengalaman dan keterampilan kerja.
+                    <div class="text-center">
+                        <p class="text-muted">
+                            Belum ada data fasilitas.
                         </p>
-
                     </div>
 
                 </div>
 
-
-                <div class="col-md-6 col-lg-4">
-
-                    <div class="facility-card">
-
-                        <div class="facility-icon">
-                            <i class="bi bi-house"></i>
-                        </div>
-
-                        <h4>
-                            Asrama
-                        </h4>
-
-                        <p>
-                            Tempat tinggal peserta selama mengikuti
-                            program pelatihan.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="col-md-6 col-lg-4">
-
-                    <div class="facility-card">
-
-                        <div class="facility-icon">
-                            <i class="bi bi-book"></i>
-                        </div>
-
-                        <h4>
-                            Perpustakaan
-                        </h4>
-
-                        <p>
-                            Koleksi materi pembelajaran untuk mendukung
-                            proses belajar peserta.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="col-md-6 col-lg-4">
-
-                    <div class="facility-card">
-
-                        <div class="facility-icon">
-                            <i class="bi bi-wifi"></i>
-                        </div>
-
-                        <h4>
-                            Internet
-                        </h4>
-
-                        <p>
-                            Akses internet untuk mendukung pembelajaran
-                            dan pencarian informasi peserta.
-                        </p>
-
-                    </div>
-
-                </div>
+                @endforelse
 
             </div>
 
@@ -946,29 +809,71 @@
 
             </div>
 
-            @foreach($programs as $program)
+            <section id="program">
 
-            <div class="program-card">
+                <div class="container">
 
-                <img
-                    src="{{ asset('storage/' . $program->image) }}"
-                    alt="{{ $program->name }}">
+                    <div class="text-center mb-5">
 
-                <div class="program-content">
+                        <div class="section-label">
+                            Program Pelatihan
+                        </div>
 
-                    <h4>
-                        {{ $program->name }}
-                    </h4>
+                        <h2 class="section-title">
+                            Persiapkan Dirimu Sebelum ke Jepang
+                        </h2>
 
-                    <p>
-                        {{ $program->description }}
-                    </p>
+                    </div>
+
+                    <div class="row g-4">
+
+                        @forelse($programs as $program)
+
+                        <div class="col-md-6 col-lg-4">
+
+                            <div class="program-card">
+
+                                @if($program->image)
+
+                                <img
+                                    src="{{ asset('storage/' . $program->image) }}"
+                                    alt="{{ $program->name }}">
+
+                                @endif
+
+                                <div class="program-content">
+
+                                    <h4>
+                                        {{ $program->name }}
+                                    </h4>
+
+                                    <p>
+                                        {{ $program->description }}
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        @empty
+
+                        <div class="col-12 text-center">
+
+                            <p class="text-muted">
+                                Belum ada program pelatihan.
+                            </p>
+
+                        </div>
+
+                        @endforelse
+
+                    </div>
 
                 </div>
 
-            </div>
-
-            @endforeach
+            </section>
 
         </div>
 
@@ -1079,29 +984,51 @@
 
             </div>
 
-            @foreach($graduates as $graduate)
+            <div class="row g-4">
 
-            <div class="graduate-card">
+                @forelse($graduates as $graduate)
 
-                <img
-                    src="{{ asset('storage/' . $graduate->photo) }}"
-                    alt="{{ $graduate->name }}">
+                <div class="col-md-6 col-lg-4">
 
-                <h5>
-                    {{ $graduate->name }}
-                </h5>
+                    <div class="graduate-card">
 
-                <div class="graduate-position">
-                    {{ $graduate->location }}
+                        @if($graduate->photo)
+
+                        <img
+                            src="{{ asset('storage/' . $graduate->photo) }}"
+                            alt="{{ $graduate->name }}">
+
+                        @endif
+
+                        <h5>
+                            {{ $graduate->name }}
+                        </h5>
+
+                        <div class="graduate-position">
+                            {{ $graduate->position ?? $graduate->location }}
+                        </div>
+
+                        <p class="mt-3">
+                            "{{ $graduate->description }}"
+                        </p>
+
+                    </div>
+
                 </div>
 
-                <p class="mt-3">
-                    "{{ $graduate->description }}"
-                </p>
+                @empty
+
+                <div class="col-12 text-center">
+
+                    <p class="text-muted">
+                        Belum ada data lulusan.
+                    </p>
+
+                </div>
+
+                @endforelse
 
             </div>
-
-            @endforeach
 
         </div>
 
@@ -1125,13 +1052,12 @@
                     kerja di Jepang.
                 </p>
 
-                <a href="https://wa.me/6281234567890"
+                <a
+                    href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $setting->whatsapp ?? '') }}"
                     target="_blank"
                     class="btn-white">
-
                     <i class="bi bi-whatsapp me-2"></i>
                     Konsultasi Sekarang
-
                 </a>
 
             </div>
@@ -1206,17 +1132,17 @@
 
                         <li>
                             <i class="bi bi-geo-alt me-2"></i>
-                            Karawang, Jawa Barat
+                            {{ $setting->address ?? 'Alamat belum tersedia' }}
                         </li>
 
                         <li>
                             <i class="bi bi-whatsapp me-2"></i>
-                            0812-3456-7890
+                            {{ $setting->phone ?? '-' }}
                         </li>
 
                         <li>
                             <i class="bi bi-envelope me-2"></i>
-                            info@sakuraindonesia.id
+                            {{ $setting->email ?? '-' }}
                         </li>
 
                     </ul>
