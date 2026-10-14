@@ -3,63 +3,91 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Program;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 
 class ProgramController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(): View
     {
-        //
+        $programs = Program::latest()->paginate(10);
+
+        return view('admin.programs.index', compact('programs'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function create(): View
     {
-        //
+        return view('admin.programs.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
-        //
+        $data = $this->validated($request);
+
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('programs', 'public');
+        }
+
+        Program::create($data);
+
+        return redirect()
+            ->route('admin.programs.index')
+            ->with('success', 'Program berhasil ditambahkan.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit(Program $program): View
     {
-        //
+        return view('admin.programs.edit', compact('program'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, Program $program): RedirectResponse
     {
-        //
+        $data = $this->validated($request);
+
+        if ($request->hasFile('image')) {
+            $this->deleteImage($program->image);
+            $data['image'] = $request->file('image')->store('programs', 'public');
+        }
+
+        $program->update($data);
+
+        return redirect()
+            ->route('admin.programs.index')
+            ->with('success', 'Program berhasil diperbarui.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(Program $program): RedirectResponse
     {
-        //
+        $this->deleteImage($program->image);
+
+        $program->delete();
+
+        return redirect()
+            ->route('admin.programs.index')
+            ->with('success', 'Program berhasil dihapus.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    private function validated(Request $request): array
     {
-        //
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ]);
+
+        // File diproses terpisah di store()/update()
+        unset($data['image']);
+
+        return $data;
+    }
+
+    private function deleteImage(?string $path): void
+    {
+        if ($path) {
+            Storage::disk('public')->delete($path);
+        }
     }
 }

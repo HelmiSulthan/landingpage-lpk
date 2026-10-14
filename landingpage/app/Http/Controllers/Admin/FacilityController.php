@@ -3,63 +3,92 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Facility;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 
 class FacilityController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(): View
     {
-        //
+        $facilities = Facility::latest()->paginate(10);
+
+        return view('admin.facilities.index', compact('facilities'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function create(): View
     {
-        //
+        return view('admin.facilities.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
-        //
+        $data = $this->validated($request);
+
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('facilities', 'public');
+        }
+
+        Facility::create($data);
+
+        return redirect()
+            ->route('admin.facilities.index')
+            ->with('success', 'Fasilitas berhasil ditambahkan.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit(Facility $facility): View
     {
-        //
+        return view('admin.facilities.edit', compact('facility'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, Facility $facility): RedirectResponse
     {
-        //
+        $data = $this->validated($request);
+
+        if ($request->hasFile('image')) {
+            $this->deleteImage($facility->image);
+            $data['image'] = $request->file('image')->store('facilities', 'public');
+        }
+
+        $facility->update($data);
+
+        return redirect()
+            ->route('admin.facilities.index')
+            ->with('success', 'Fasilitas berhasil diperbarui.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(Facility $facility): RedirectResponse
     {
-        //
+        $this->deleteImage($facility->image);
+
+        $facility->delete();
+
+        return redirect()
+            ->route('admin.facilities.index')
+            ->with('success', 'Fasilitas berhasil dihapus.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    private function validated(Request $request): array
     {
-        //
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'icon' => 'nullable|string|max:100',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ]);
+
+        // File diproses terpisah di store()/update()
+        unset($data['image']);
+
+        return $data;
+    }
+
+    private function deleteImage(?string $path): void
+    {
+        if ($path) {
+            Storage::disk('public')->delete($path);
+        }
     }
 }

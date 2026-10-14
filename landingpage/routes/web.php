@@ -32,13 +32,16 @@ Route::middleware(['auth', 'admin'])
         ])->name('admin.settings.update');
 
         Route::resource('facilities', FacilityController::class)
+            ->except('show')
             ->names('admin.facilities');
 
         Route::resource('programs', ProgramController::class)
+            ->except('show')
             ->names('admin.programs');
 
         Route::resource('graduates', GraduateController::class)
+            ->except('show')
             ->names('admin.graduates');
     });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
