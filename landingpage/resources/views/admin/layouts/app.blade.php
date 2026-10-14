@@ -1,14 +1,13 @@
-```blade
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>@yield('title', 'Admin Dashboard') - LPK Sakura Indonesia</title>
+    <title>@yield('title', 'Admin Dashboard') - LPK Kelas Jepang Pangandaran</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
         body {
@@ -46,7 +45,7 @@
     <div class="row">
 
         <aside class="col-md-2 sidebar">
-            <h5 class="text-white mb-4">LPK Sakura</h5>
+            <h5 class="text-white mb-4">LPK Kelas Jepang Pangandaran</h5>
 
             <a href="{{ route('admin.dashboard') }}">Dashboard</a>
             <a href="{{ route('admin.settings.edit') }}">Pengaturan</a>

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>LPK Sakura Indonesia | Pelatihan Kerja ke Jepang</title>
+    <title>LPK Kelas Jepang Pangandaran | Pelatihan Kerja ke Jepang</title>
 
     <!-- Google Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -503,7 +503,7 @@
         <div class="container">
 
             <a class="navbar-brand" href="#beranda">
-                {{ $setting->site_name ?? 'SAKURA INDONESIA' }}
+                {{ $setting->site_name ?? 'LPK Kelas Jepang Pangandaran' }}
             </a>
 
             <button class="navbar-toggler"
@@ -1077,7 +1077,7 @@
                 <div class="col-lg-5">
 
                     <h5>
-                        SAKURA INDONESIA
+                        LPK KELAS JEPANG PANGANDARAN
                     </h5>
 
                     <p>
@@ -1154,7 +1154,7 @@
 
             <div class="footer-bottom text-center">
 
-                © {{ date('Y') }} Sakura Indonesia.
+                © {{ date('Y') }} LPK Kelas Jepang Pangandaran.
                 All Rights Reserved.
 
             </div>
