@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Concerns\HandlesImageUpload;
 use App\Http\Controllers\Controller;
 use App\Models\Facility;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 class FacilityController extends Controller
 {
+    use HandlesImageUpload;
+
     public function index(): View
     {
         $facilities = Facility::latest()->paginate(10);
@@ -33,6 +36,8 @@ class FacilityController extends Controller
 
         Facility::create($data);
 
+        Cache::forget('landing.facilities');
+
         return redirect()
             ->route('admin.facilities.index')
             ->with('success', 'Fasilitas berhasil ditambahkan.');
@@ -54,6 +59,8 @@ class FacilityController extends Controller
 
         $facility->update($data);
 
+        Cache::forget('landing.facilities');
+
         return redirect()
             ->route('admin.facilities.index')
             ->with('success', 'Fasilitas berhasil diperbarui.');
@@ -64,6 +71,8 @@ class FacilityController extends Controller
         $this->deleteImage($facility->image);
 
         $facility->delete();
+
+        Cache::forget('landing.facilities');
 
         return redirect()
             ->route('admin.facilities.index')
@@ -83,12 +92,5 @@ class FacilityController extends Controller
         unset($data['image']);
 
         return $data;
-    }
-
-    private function deleteImage(?string $path): void
-    {
-        if ($path) {
-            Storage::disk('public')->delete($path);
-        }
     }
 }

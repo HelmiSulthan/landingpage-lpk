@@ -285,6 +285,14 @@
             margin-bottom: 20px;
         }
 
+        .facility-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
         .facility-card h4 {
             font-size: 20px;
             font-weight: 700;
@@ -304,6 +312,15 @@
             border: 1px solid #e5e7eb;
             height: 100%;
             background: white;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            transition: .3s;
+        }
+
+        .program-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, .08);
         }
 
         .program-card img {
@@ -314,6 +331,9 @@
 
         .program-content {
             padding: 25px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
         }
 
         .program-content h4 {
@@ -324,6 +344,60 @@
         .program-content p {
             color: var(--gray);
             line-height: 1.7;
+            /* Truncate: tampilkan max 3 baris */
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .program-detail-btn {
+            margin-top: 16px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+            background: #fee2e2;
+            border: none;
+            padding: 7px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            align-self: flex-start;
+            transition: .2s;
+        }
+
+        .program-detail-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Modal program */
+        .modal-program .modal-header {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .modal-program .modal-img {
+            width: 100%;
+            max-height: 280px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .modal-program .modal-body {
+            padding: 28px;
+        }
+
+        .modal-program .modal-title {
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .modal-program .modal-desc {
+            color: var(--gray);
+            line-height: 1.8;
+            white-space: pre-line;
         }
 
         /* STATISTIC */
@@ -491,6 +565,64 @@
 
             .cta-box h2 {
                 font-size: 30px;
+            }
+        }
+
+
+        /* HORIZONTAL SLIDER: FASILITAS & LULUSAN */
+        .facility-slider,
+        .graduate-slider {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 24px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 10px 4px 20px;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .facility-slider>*,
+        .graduate-slider>* {
+            flex: 0 0 calc((100% - 48px) / 3);
+            min-width: 0;
+            scroll-snap-align: start;
+        }
+
+        /* Scrollbar */
+        .facility-slider::-webkit-scrollbar,
+        .graduate-slider::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .facility-slider::-webkit-scrollbar-thumb,
+        .graduate-slider::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        .facility-slider::-webkit-scrollbar-track,
+        .graduate-slider::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+
+        /* Tablet */
+        @media (max-width: 991.98px) {
+
+            .facility-slider>*,
+            .graduate-slider>* {
+                flex-basis: calc((100% - 24px) / 2);
+            }
+        }
+
+        /* HP */
+        @media (max-width: 575.98px) {
+
+            .facility-slider>*,
+            .graduate-slider>* {
+                flex-basis: 85%;
             }
         }
     </style>
@@ -701,15 +833,23 @@
                             Misi
                         </h3>
 
+                        @php
+                            $misiItems = array_filter(
+                                array_map('trim', explode("\n", $setting->mission ?? '')),
+                                fn($line) => $line !== ''
+                            );
+                        @endphp
+
+                        @forelse(array_values($misiItems) as $index => $misi)
                         <div class="mission-item">
                             <div class="mission-number">
-                                01
+                                {{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
                             </div>
-
-                            <p>
-                                {!! nl2br(e($setting->mission ?? 'Misi belum tersedia.')) !!}
-                            </p>
+                            <p>{{ $misi }}</p>
                         </div>
+                        @empty
+                        <p class="text-muted">Misi belum tersedia.</p>
+                        @endforelse
 
                     </div>
 
@@ -745,19 +885,24 @@
 
             </div>
 
-            <div class="row g-4">
+            <div class="facility-slider">
 
                 @forelse($facilities as $facility)
 
-                <div class="col-md-6 col-lg-4">
+                <div>
 
                     <div class="facility-card">
 
-                        <div class="facility-icon">
-
-                            <i class="{{ $facility->icon ?? 'bi bi-building' }}"></i>
-
-                        </div>
+                        @if($facility->image)
+                            <img
+                                src="{{ asset('storage/' . $facility->image) }}"
+                                alt="{{ $facility->name }}"
+                                class="facility-img">
+                        @else
+                            <div class="facility-icon">
+                                <i class="{{ $facility->icon ?? 'bi bi-building' }}"></i>
+                            </div>
+                        @endif
 
                         <h4>
                             {{ $facility->name }}
@@ -809,75 +954,88 @@
 
             </div>
 
-            <section id="program">
+            <div class="row g-4">
 
-                <div class="container">
+                @forelse($programs as $program)
 
-                    <div class="text-center mb-5">
+                <div class="col-md-6 col-lg-4">
 
-                        <div class="section-label">
-                            Program Pelatihan
-                        </div>
+                    <div class="program-card"
+                         data-bs-toggle="modal"
+                         data-bs-target="#programModal"
+                         data-name="{{ $program->name }}"
+                         data-description="{{ $program->description }}"
+                         data-image="{{ $program->image ? asset('storage/' . $program->image) : '' }}">
 
-                        <h2 class="section-title">
-                            Persiapkan Dirimu Sebelum ke Jepang
-                        </h2>
+                        @if($program->image)
 
-                    </div>
+                        <img
+                            src="{{ asset('storage/' . $program->image) }}"
+                            alt="{{ $program->name }}">
 
-                    <div class="row g-4">
+                        @endif
 
-                        @forelse($programs as $program)
+                        <div class="program-content">
 
-                        <div class="col-md-6 col-lg-4">
+                            <h4>{{ $program->name }}</h4>
 
-                            <div class="program-card">
+                            <p>{{ $program->description }}</p>
 
-                                @if($program->image)
-
-                                <img
-                                    src="{{ asset('storage/' . $program->image) }}"
-                                    alt="{{ $program->name }}">
-
-                                @endif
-
-                                <div class="program-content">
-
-                                    <h4>
-                                        {{ $program->name }}
-                                    </h4>
-
-                                    <p>
-                                        {{ $program->description }}
-                                    </p>
-
-                                </div>
-
-                            </div>
+                            <button class="program-detail-btn" type="button">
+                                Lihat Detail <i class="bi bi-arrow-right ms-1"></i>
+                            </button>
 
                         </div>
-
-                        @empty
-
-                        <div class="col-12 text-center">
-
-                            <p class="text-muted">
-                                Belum ada program pelatihan.
-                            </p>
-
-                        </div>
-
-                        @endforelse
 
                     </div>
 
                 </div>
 
-            </section>
+                @empty
+
+                <div class="col-12 text-center">
+
+                    <p class="text-muted">
+                        Belum ada program pelatihan.
+                    </p>
+
+                </div>
+
+                @endforelse
+
+            </div>
 
         </div>
 
     </section>
+
+    <!-- MODAL DETAIL PROGRAM -->
+    <div class="modal fade modal-program" id="programModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+                <div class="modal-body p-0">
+
+                    <div id="programModalImg" class="d-none">
+                        <img id="programModalImgEl" src="" alt="" style="width:100%; max-height:300px; object-fit:cover;">
+                    </div>
+
+                    <div class="p-4">
+
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h4 id="programModalName" class="modal-title mb-0"></h4>
+                            <button type="button" class="btn-close ms-3" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                        </div>
+
+                        <div class="section-label mb-2">Program Pelatihan</div>
+
+                        <p id="programModalDesc" class="modal-desc"></p>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <!-- STATISTIC -->
@@ -984,11 +1142,11 @@
 
             </div>
 
-            <div class="row g-4">
+            <div class="graduate-slider">
 
                 @forelse($graduates as $graduate)
 
-                <div class="col-md-6 col-lg-4">
+                <div>
 
                     <div class="graduate-card">
 
@@ -1005,7 +1163,7 @@
                         </h5>
 
                         <div class="graduate-position">
-                            {{ $graduate->position ?? $graduate->location }}
+                            {{ $graduate->display_position }}
                         </div>
 
                         <p class="mt-3">
@@ -1053,7 +1211,7 @@
                 </p>
 
                 <a
-                    href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $setting->whatsapp ?? '') }}"
+                    href="{{ $setting->whatsapp_link }}"
                     target="_blank"
                     class="btn-white">
                     <i class="bi bi-whatsapp me-2"></i>
@@ -1167,7 +1325,31 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+    <script>
+        // Isi modal program dengan data dari card yang diklik
+        const programModal = document.getElementById('programModal');
+        programModal.addEventListener('show.bs.modal', function (e) {
+            const card    = e.relatedTarget;
+            const name    = card.dataset.name;
+            const desc    = card.dataset.description;
+            const image   = card.dataset.image;
+
+            document.getElementById('programModalName').textContent = name;
+            document.getElementById('programModalDesc').textContent = desc;
+
+            const imgWrapper = document.getElementById('programModalImg');
+            const imgEl      = document.getElementById('programModalImgEl');
+
+            if (image) {
+                imgEl.src = image;
+                imgEl.alt = name;
+                imgWrapper.classList.remove('d-none');
+            } else {
+                imgWrapper.classList.add('d-none');
+            }
+        });
+    </script>
+
 </body>
 
 </html>
-```

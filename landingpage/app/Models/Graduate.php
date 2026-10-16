@@ -13,4 +13,12 @@ class Graduate extends Model
         'description',
         'photo',
     ];
+
+    /**
+     * Tampilkan position jika ada, fallback ke location.
+     */
+    public function getDisplayPositionAttribute(): string
+    {
+        return $this->position ?? $this->location ?? '';
+    }
 }

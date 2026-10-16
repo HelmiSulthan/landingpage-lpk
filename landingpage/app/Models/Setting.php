@@ -23,4 +23,13 @@ class Setting extends Model
         'japan_count',
         'experience_years',
     ];
+
+    /**
+     * Normalisasi nomor WhatsApp menjadi URL wa.me (hanya angka).
+     */
+    public function getWhatsappLinkAttribute(): string
+    {
+        $number = preg_replace('/[^0-9]/', '', $this->whatsapp ?? '');
+        return "https://wa.me/{$number}";
+    }
 }

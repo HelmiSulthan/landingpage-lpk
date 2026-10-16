@@ -1,5 +1,7 @@
 @extends('admin.layouts.app')
 
+@section('title', 'Dashboard')
+
 @section('content')
 
 <div class="container-fluid">
@@ -13,21 +15,21 @@
         <div class="col-md-3">
             <div class="card p-4">
                 <h6>Fasilitas</h6>
-                <h2>{{ \App\Models\Facility::count() }}</h2>
+                <h2>{{ $facilitiesCount }}</h2>
             </div>
         </div>
 
         <div class="col-md-3">
             <div class="card p-4">
                 <h6>Program</h6>
-                <h2>{{ \App\Models\Program::count() }}</h2>
+                <h2>{{ $programsCount }}</h2>
             </div>
         </div>
 
         <div class="col-md-3">
             <div class="card p-4">
                 <h6>Lulusan</h6>
-                <h2>{{ \App\Models\Graduate::count() }}</h2>
+                <h2>{{ $graduatesCount }}</h2>
             </div>
         </div>
 

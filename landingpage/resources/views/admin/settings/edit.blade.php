@@ -1,5 +1,7 @@
 @extends('admin.layouts.app')
 
+@section('title', 'Pengaturan Website')
+
 @section('content')
 
 <div class="container-fluid">
@@ -12,6 +14,18 @@
 
         <div class="alert alert-success">
             {{ session('success') }}
+        </div>
+
+    @endif
+
+    @if($errors->any())
+
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
         </div>
 
     @endif
@@ -122,10 +136,15 @@
 
             <div class="mb-3">
 
+                <small class="text-muted d-block mb-2">
+                    Tulis setiap poin misi pada baris baru. Setiap baris akan otomatis diberi nomor urut.
+                </small>
+
                 <textarea
                     name="mission"
                     class="form-control"
                     rows="7"
+                    placeholder="Contoh:&#10;Memberikan pelatihan bahasa Jepang yang intensif&#10;Menyiapkan peserta secara mental dan fisik&#10;Menyalurkan lulusan ke perusahaan terpercaya di Jepang"
                 >{{ $setting->mission ?? '' }}</textarea>
 
             </div>
@@ -214,6 +233,20 @@
                     name="address"
                     class="form-control"
                     value="{{ $setting->address ?? '' }}"
+                >
+
+            </div>
+
+
+            <div class="mb-3">
+
+                <label>Telepon</label>
+
+                <input
+                    type="text"
+                    name="phone"
+                    class="form-control"
+                    value="{{ $setting->phone ?? '' }}"
                 >
 
             </div>

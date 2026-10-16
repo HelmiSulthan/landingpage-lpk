@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Concerns\HandlesImageUpload;
 use App\Http\Controllers\Controller;
 use App\Models\Graduate;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 class GraduateController extends Controller
 {
+    use HandlesImageUpload;
+
     public function index(): View
     {
         $graduates = Graduate::latest()->paginate(10);
@@ -33,6 +36,8 @@ class GraduateController extends Controller
 
         Graduate::create($data);
 
+        Cache::forget('landing.graduates');
+
         return redirect()
             ->route('admin.graduates.index')
             ->with('success', 'Lulusan berhasil ditambahkan.');
@@ -54,6 +59,8 @@ class GraduateController extends Controller
 
         $graduate->update($data);
 
+        Cache::forget('landing.graduates');
+
         return redirect()
             ->route('admin.graduates.index')
             ->with('success', 'Lulusan berhasil diperbarui.');
@@ -64,6 +71,8 @@ class GraduateController extends Controller
         $this->deleteImage($graduate->photo);
 
         $graduate->delete();
+
+        Cache::forget('landing.graduates');
 
         return redirect()
             ->route('admin.graduates.index')
@@ -84,12 +93,5 @@ class GraduateController extends Controller
         unset($data['photo']);
 
         return $data;
-    }
-
-    private function deleteImage(?string $path): void
-    {
-        if ($path) {
-            Storage::disk('public')->delete($path);
-        }
     }
 }

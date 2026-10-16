@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Concerns\HandlesImageUpload;
 use App\Http\Controllers\Controller;
 use App\Models\Program;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 class ProgramController extends Controller
 {
+    use HandlesImageUpload;
+
     public function index(): View
     {
         $programs = Program::latest()->paginate(10);
@@ -33,6 +36,8 @@ class ProgramController extends Controller
 
         Program::create($data);
 
+        Cache::forget('landing.programs');
+
         return redirect()
             ->route('admin.programs.index')
             ->with('success', 'Program berhasil ditambahkan.');
@@ -54,6 +59,8 @@ class ProgramController extends Controller
 
         $program->update($data);
 
+        Cache::forget('landing.programs');
+
         return redirect()
             ->route('admin.programs.index')
             ->with('success', 'Program berhasil diperbarui.');
@@ -64,6 +71,8 @@ class ProgramController extends Controller
         $this->deleteImage($program->image);
 
         $program->delete();
+
+        Cache::forget('landing.programs');
 
         return redirect()
             ->route('admin.programs.index')
@@ -82,12 +91,5 @@ class ProgramController extends Controller
         unset($data['image']);
 
         return $data;
-    }
-
-    private function deleteImage(?string $path): void
-    {
-        if ($path) {
-            Storage::disk('public')->delete($path);
-        }
     }
 }

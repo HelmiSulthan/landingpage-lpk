@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Concerns\HandlesImageUpload;
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class SettingController extends Controller
 {
     public function edit()
     {
-        $setting = Setting::first();
+        $setting = Setting::firstOrNew([]);
 
         return view('admin.settings.edit', compact('setting'));
     }
@@ -35,13 +37,9 @@ class SettingController extends Controller
             'experience_years' => 'nullable|integer',
         ]);
 
-        $setting = Setting::first();
+        Setting::updateOrCreate([], $data);
 
-        if (!$setting) {
-            Setting::create($data);
-        } else {
-            $setting->update($data);
-        }
+        Cache::forget('landing.setting');
 
         return redirect()
             ->route('admin.settings.edit')
