@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Concerns\HandlesImageUpload;
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -40,6 +41,8 @@ class SettingController extends Controller
         Setting::updateOrCreate([], $data);
 
         Cache::forget('landing.setting');
+
+        ActivityLog::record('update', 'Pengaturan', 'Memperbarui pengaturan website');
 
         return redirect()
             ->route('admin.settings.edit')

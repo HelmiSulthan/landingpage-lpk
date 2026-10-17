@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Concerns\HandlesImageUpload;
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\Program;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -34,9 +35,11 @@ class ProgramController extends Controller
             $data['image'] = $request->file('image')->store('programs', 'public');
         }
 
-        Program::create($data);
+        $program = Program::create($data);
 
         Cache::forget('landing.programs');
+
+        ActivityLog::record('create', 'Program', "Menambahkan program: {$program->name}");
 
         return redirect()
             ->route('admin.programs.index')
@@ -61,6 +64,8 @@ class ProgramController extends Controller
 
         Cache::forget('landing.programs');
 
+        ActivityLog::record('update', 'Program', "Memperbarui program: {$program->name}");
+
         return redirect()
             ->route('admin.programs.index')
             ->with('success', 'Program berhasil diperbarui.');
@@ -73,6 +78,8 @@ class ProgramController extends Controller
         $program->delete();
 
         Cache::forget('landing.programs');
+
+        ActivityLog::record('delete', 'Program', "Menghapus program: {$program->name}");
 
         return redirect()
             ->route('admin.programs.index')

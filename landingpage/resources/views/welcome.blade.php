@@ -459,6 +459,42 @@
             font-weight: 700;
         }
 
+        /* QnA */
+        .qna-section {
+            background: #f8fafc;
+        }
+
+        .qna-accordion .accordion-item {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px !important;
+            margin-bottom: 14px;
+            overflow: hidden;
+            background: white;
+        }
+
+        .qna-accordion .accordion-button {
+            font-weight: 600;
+            font-size: 17px;
+            color: var(--dark);
+            padding: 20px 24px;
+        }
+
+        .qna-accordion .accordion-button:not(.collapsed) {
+            background: #fee2e2;
+            color: var(--primary);
+        }
+
+        .qna-accordion .accordion-button:focus {
+            box-shadow: none;
+        }
+
+        .qna-accordion .accordion-body {
+            padding: 22px 24px;
+            color: var(--gray);
+            line-height: 1.8;
+            font-size: 15px;
+        }
+
         /* CTA */
         .cta {
             padding: 80px 0;
@@ -667,6 +703,10 @@
 
                     <li class="nav-item">
                         <a class="nav-link" href="#lulusan">Lulusan</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#qna">QnA</a>
                     </li>
 
                     <li class="nav-item ms-lg-3 mt-3 mt-lg-0">
@@ -1193,6 +1233,72 @@
     </section>
 
 
+    <!-- QnA -->
+    <section id="qna" class="qna-section">
+
+        <div class="container">
+
+            <div class="text-center mb-5">
+
+                <div class="section-label">
+                    QnA
+                </div>
+
+                <h2 class="section-title">
+                    Pertanyaan yang Sering Ditanyakan
+                </h2>
+
+                <p class="section-description mx-auto">
+                    Temukan jawaban atas pertanyaan yang paling sering kami terima.
+                </p>
+
+            </div>
+
+            @if($faqs->isEmpty())
+
+                <p class="text-center text-muted">Belum ada pertanyaan.</p>
+
+            @else
+
+                <div class="accordion qna-accordion" id="faqAccordion">
+
+                    @foreach($faqs as $faq)
+
+                    <div class="accordion-item">
+
+                        <h2 class="accordion-header" id="faqHeading{{ $faq->id }}">
+                            <button class="accordion-button collapsed"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#faqCollapse{{ $faq->id }}"
+                                    aria-expanded="{{ $loop->first ? 'true' : 'false' }}"
+                                    aria-controls="faqCollapse{{ $faq->id }}">
+                                {{ $faq->question }}
+                            </button>
+                        </h2>
+
+                        <div id="faqCollapse{{ $faq->id }}"
+                             class="accordion-collapse collapse"
+                             aria-labelledby="faqHeading{{ $faq->id }}"
+                             data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                {!! nl2br(e($faq->answer)) !!}
+                            </div>
+                        </div>
+
+                    </div>
+
+                    @endforeach
+
+                </div>
+
+            @endif
+
+        </div>
+
+    </section>
+
+
     <!-- CTA -->
     <section class="cta" id="kontak">
 
@@ -1273,6 +1379,10 @@
 
                         <li>
                             <a href="#lulusan">Lulusan</a>
+                        </li>
+
+                        <li>
+                            <a href="#qna">QnA</a>
                         </li>
 
                     </ul>

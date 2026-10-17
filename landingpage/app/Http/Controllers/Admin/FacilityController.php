@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Concerns\HandlesImageUpload;
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\Facility;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -34,9 +35,11 @@ class FacilityController extends Controller
             $data['image'] = $request->file('image')->store('facilities', 'public');
         }
 
-        Facility::create($data);
+        $facility = Facility::create($data);
 
         Cache::forget('landing.facilities');
+
+        ActivityLog::record('create', 'Fasilitas', "Menambahkan fasilitas: {$facility->name}");
 
         return redirect()
             ->route('admin.facilities.index')
@@ -61,6 +64,8 @@ class FacilityController extends Controller
 
         Cache::forget('landing.facilities');
 
+        ActivityLog::record('update', 'Fasilitas', "Memperbarui fasilitas: {$facility->name}");
+
         return redirect()
             ->route('admin.facilities.index')
             ->with('success', 'Fasilitas berhasil diperbarui.');
@@ -73,6 +78,8 @@ class FacilityController extends Controller
         $facility->delete();
 
         Cache::forget('landing.facilities');
+
+        ActivityLog::record('delete', 'Fasilitas', "Menghapus fasilitas: {$facility->name}");
 
         return redirect()
             ->route('admin.facilities.index')

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Concerns\HandlesImageUpload;
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\Graduate;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -34,9 +35,11 @@ class GraduateController extends Controller
             $data['photo'] = $request->file('photo')->store('graduates', 'public');
         }
 
-        Graduate::create($data);
+        $graduate = Graduate::create($data);
 
         Cache::forget('landing.graduates');
+
+        ActivityLog::record('create', 'Lulusan', "Menambahkan lulusan: {$graduate->name}");
 
         return redirect()
             ->route('admin.graduates.index')
@@ -61,6 +64,8 @@ class GraduateController extends Controller
 
         Cache::forget('landing.graduates');
 
+        ActivityLog::record('update', 'Lulusan', "Memperbarui lulusan: {$graduate->name}");
+
         return redirect()
             ->route('admin.graduates.index')
             ->with('success', 'Lulusan berhasil diperbarui.');
@@ -73,6 +78,8 @@ class GraduateController extends Controller
         $graduate->delete();
 
         Cache::forget('landing.graduates');
+
+        ActivityLog::record('delete', 'Lulusan', "Menghapus lulusan: {$graduate->name}");
 
         return redirect()
             ->route('admin.graduates.index')

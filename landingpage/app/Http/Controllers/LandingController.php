@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Facility;
+use App\Models\Faq;
 use App\Models\Graduate;
 use App\Models\Program;
 use App\Models\Setting;
@@ -49,11 +50,16 @@ class LandingController extends Controller
             return Graduate::latest()->get();
         });
 
+        $faqs = Cache::remember('landing.faqs', 3600, function () {
+            return Faq::latest()->get();
+        });
+
         return view('welcome', compact(
             'setting',
             'facilities',
             'programs',
-            'graduates'
+            'graduates',
+            'faqs'
         ));
     }
 }

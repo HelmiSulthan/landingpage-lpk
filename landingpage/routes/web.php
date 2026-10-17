@@ -7,6 +7,8 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\FacilityController;
 use App\Http\Controllers\Admin\ProgramController;
 use App\Http\Controllers\Admin\GraduateController;
+use App\Http\Controllers\Admin\FaqController;
+use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\ProfileController;
 
 // Landing page publik
@@ -43,6 +45,14 @@ Route::middleware(['auth', 'admin'])
         Route::resource('graduates', GraduateController::class)
             ->except('show')
             ->names('admin.graduates');
+
+        Route::resource('faqs', FaqController::class)
+            ->except('show')
+            ->names('admin.faqs');
+
+        Route::get('/activity-logs', [ActivityLogController::class, 'index'])
+            ->name('admin.activity-logs.index');
+
         Route::get('/profile', [ProfileController::class, 'edit'])
             ->name('profile.edit');
 

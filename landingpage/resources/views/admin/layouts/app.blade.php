@@ -53,6 +53,8 @@
             <a href="{{ route('admin.facilities.index') }}">Fasilitas</a>
             <a href="{{ route('admin.programs.index') }}">Program</a>
             <a href="{{ route('admin.graduates.index') }}">Lulusan</a>
+            <a href="{{ route('admin.faqs.index') }}">QnA</a>
+            <a href="{{ route('admin.activity-logs.index') }}">Log Aktivitas</a>
 
             <form action="{{ route('logout') }}" method="POST" class="mt-4">
                 @csrf
