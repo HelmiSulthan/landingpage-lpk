@@ -1,14 +1,14 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Program')
+@section('title', 'Alur Pendaftaran')
 
 @section('content')
 
 <div class="container-fluid">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="mb-0">Program</h1>
-        <a href="{{ route('admin.programs.create') }}" class="btn btn-primary">+ Tambah Program</a>
+        <h1 class="mb-0">Alur Pendaftaran</h1>
+        <a href="{{ route('admin.programs.create') }}" class="btn btn-primary">+ Tambah Alur</a>
     </div>
 
     @if(session('success'))
@@ -20,7 +20,7 @@
             <table class="table table-hover align-middle mb-0">
                 <thead>
                     <tr>
-                        <th>Gambar</th>
+                        <th style="width:50px">No</th>
                         <th>Nama</th>
                         <th>Deskripsi</th>
                         <th style="width:160px">Aksi</th>
@@ -29,15 +29,9 @@
                 <tbody>
                     @forelse($programs as $item)
                     <tr>
-                        <td style="width:90px">
-                            @if($item->image)
-                            <img src="{{ asset('storage/' . $item->image) }}" alt="" class="rounded" style="width:64px;height:64px;object-fit:cover">
-                            @else
-                            <span class="text-muted">-</span>
-                            @endif
-                        </td>
+                        <td>{{ $loop->iteration }}</td>
                         <td>{{ $item->name ?? '-' }}</td>
-                        <td>{{ \Illuminate\Support\Str::limit($item->description, 80) }}</td>
+                        <td>{{ \Illuminate\Support\Str::limit(strip_tags(str_replace('&nbsp;', ' ', $item->description ?? '')), 80) }}</td>
                         <td>
                             <a href="{{ route('admin.programs.edit', $item) }}" class="btn btn-sm btn-outline-primary">Edit</a>
 

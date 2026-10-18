@@ -18,8 +18,8 @@
 
 <div class="mb-3">
     <label class="form-label" for="answer">Jawaban <span class="text-danger">*</span></label>
-    <textarea id="answer" name="answer" rows="6" class="form-control @error('answer') is-invalid @enderror">{{ old('answer', $item->answer ?? '') }}</textarea>
-    @error('answer')<div class="invalid-feedback">{{ $message }}</div>@enderror
+    @include('admin.components.quill-editor', ['fieldName' => 'answer', 'value' => old('answer', $item->answer ?? ''), 'minHeight' => 180])
+    @error('answer')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
 </div>
 
 <div class="d-flex gap-2">

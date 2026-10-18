@@ -31,7 +31,8 @@
     @endif
 
     <form action="{{ route('admin.settings.update') }}"
-          method="POST">
+          method="POST"
+          enctype="multipart/form-data">
 
         @csrf
         @method('PUT')
@@ -87,12 +88,7 @@
             <div class="mb-3">
 
                 <label>Deskripsi Hero</label>
-
-                <textarea
-                    name="hero_description"
-                    class="form-control"
-                    rows="4"
-                >{{ $setting->hero_description ?? '' }}</textarea>
+                @include('admin.components.quill-editor', ['fieldName' => 'hero_description', 'value' => $setting->hero_description ?? '', 'minHeight' => 120])
 
             </div>
 
@@ -106,11 +102,45 @@
 
             <div class="mb-3">
 
-                <textarea
-                    name="profile"
-                    class="form-control"
-                    rows="6"
-                >{{ $setting->profile ?? '' }}</textarea>
+                @include('admin.components.quill-editor', ['fieldName' => 'profile', 'value' => $setting->profile ?? '', 'minHeight' => 180])
+
+            </div>
+
+            <div class="row mb-3">
+
+                <div class="col-md-4">
+                    <label class="form-label">Foto Atasan</label>
+
+                    @if($setting->leader_photo)
+                        <div class="mb-2 d-flex align-items-center gap-3">
+                            <img src="{{ asset('storage/' . $setting->leader_photo) }}"
+                                 alt="Atasan"
+                                 style="width:80px;height:80px;object-fit:cover;border-radius:50%;border:3px solid #fee2e2">
+                            <div>
+                                <label class="d-flex align-items-center gap-1 text-danger small" style="cursor:pointer">
+                                    <input type="checkbox" name="remove_leader_photo" value="1"> Hapus foto
+                                </label>
+                            </div>
+                        </div>
+                    @endif
+
+                    <input type="file" name="leader_photo" accept=".jpg,.jpeg,.png,.webp" class="form-control">
+                    <div class="form-text">JPG, PNG, WEBP. Maks 2MB.{{ $setting->leader_photo ? ' Kosongkan jika tidak ingin mengganti.' : '' }}</div>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Nama Atasan</label>
+                    <input type="text" name="leader_name" class="form-control"
+                           value="{{ old('leader_name', $setting->leader_name ?? '') }}"
+                           placeholder="Contoh: Budi Santoso">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Jabatan Atasan</label>
+                    <input type="text" name="leader_position" class="form-control"
+                           value="{{ old('leader_position', $setting->leader_position ?? '') }}"
+                           placeholder="Contoh: Kepala LPK">
+                </div>
 
             </div>
 
@@ -121,11 +151,7 @@
 
             <div class="mb-3">
 
-                <textarea
-                    name="vision"
-                    class="form-control"
-                    rows="5"
-                >{{ $setting->vision ?? '' }}</textarea>
+                @include('admin.components.quill-editor', ['fieldName' => 'vision', 'value' => $setting->vision ?? '', 'minHeight' => 150])
 
             </div>
 
@@ -140,12 +166,7 @@
                     Tulis setiap poin misi pada baris baru. Setiap baris akan otomatis diberi nomor urut.
                 </small>
 
-                <textarea
-                    name="mission"
-                    class="form-control"
-                    rows="7"
-                    placeholder="Contoh:&#10;Memberikan pelatihan bahasa Jepang yang intensif&#10;Menyiapkan peserta secara mental dan fisik&#10;Menyalurkan lulusan ke perusahaan terpercaya di Jepang"
-                >{{ $setting->mission ?? '' }}</textarea>
+                @include('admin.components.quill-editor', ['fieldName' => 'mission', 'value' => $setting->mission ?? '', 'minHeight' => 200])
 
             </div>
 
@@ -287,6 +308,50 @@
         </div>
 
     </form>
+
+    {{-- CARD FOTO HERO --}}
+    <div class="card p-4 mt-4" id="hero-images">
+
+        <h5 class="mb-1">Foto Latar Hero</h5>
+        <p class="text-muted small mb-3">
+            Foto akan tampil bergantian sebagai latar belakang hero (slideshow otomatis tiap 5 detik).
+            Rekomendasi: lebar minimal 1800px, rasio landscape. Maks 4MB per file.
+        </p>
+
+        {{-- Upload form --}}
+        <form action="{{ route('admin.hero-images.store') }}" method="POST" enctype="multipart/form-data" class="mb-4">
+            @csrf
+            <div class="d-flex gap-2 align-items-center flex-wrap">
+                <input type="file" name="images[]" class="form-control" accept=".jpg,.jpeg,.png,.webp" multiple required style="max-width:400px">
+                <button type="submit" class="btn btn-primary btn-sm">Unggah</button>
+            </div>
+            @error('images')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+        </form>
+
+        {{-- Grid foto --}}
+        @if($heroImages->isEmpty())
+            <p class="text-muted small">Belum ada foto. Jika kosong, hero menggunakan foto default.</p>
+        @else
+            <div class="row g-3">
+                @foreach($heroImages as $img)
+                <div class="col-md-3 col-sm-4 col-6">
+                    <div class="card h-100">
+                        <img src="{{ asset('storage/' . $img->image) }}" alt="Hero" class="card-img-top" style="height:120px;object-fit:cover">
+                        <div class="card-body p-2">
+                            <form action="{{ route('admin.hero-images.destroy', $img) }}" method="POST"
+                                  onsubmit="return confirm('Hapus foto ini?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-outline-danger w-100">Hapus</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        @endif
+
+    </div>
 
 </div>
 

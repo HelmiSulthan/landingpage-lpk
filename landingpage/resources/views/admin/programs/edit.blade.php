@@ -1,12 +1,12 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Edit Program')
+@section('title', 'Edit Alur Pendaftaran')
 
 @section('content')
 
 <div class="container-fluid">
 
-    <h1 class="mb-4">Edit Program</h1>
+    <h1 class="mb-4">Edit Alur Pendaftaran</h1>
 
     <form action="{{ route('admin.programs.update', $program) }}" method="POST" enctype="multipart/form-data">
         @csrf

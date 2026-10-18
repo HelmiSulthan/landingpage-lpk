@@ -25,8 +25,8 @@
 
 <div class="mb-3">
     <label class="form-label" for="description">Deskripsi</label>
-    <textarea id="description" name="description" rows="4" class="form-control @error('description') is-invalid @enderror">{{ old('description', $item->description ?? '') }}</textarea>
-    @error('description')<div class="invalid-feedback">{{ $message }}</div>@enderror
+    @include('admin.components.quill-editor', ['fieldName' => 'description', 'value' => old('description', $item->description ?? ''), 'minHeight' => 150])
+    @error('description')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
 </div>
 
 <div class="mb-3">

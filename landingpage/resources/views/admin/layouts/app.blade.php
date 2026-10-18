@@ -9,6 +9,7 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
 
     <style>
         body {
@@ -16,7 +17,10 @@
         }
 
         .sidebar {
-            min-height: 100vh;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
             background-color: #212529;
             padding: 24px 16px;
         }
@@ -38,6 +42,24 @@
         .main-content {
             padding: 28px;
         }
+
+        /* Quill editor */
+        .ql-container {
+            font-size: 15px;
+            min-height: 120px;
+            border-bottom-left-radius: 6px;
+            border-bottom-right-radius: 6px;
+        }
+
+        .ql-toolbar {
+            border-top-left-radius: 6px;
+            border-top-right-radius: 6px;
+            background: #f8f9fa;
+        }
+
+        .ql-editor {
+            min-height: 120px;
+        }
     </style>
 </head>
 <body>
@@ -51,9 +73,11 @@
             <a href="{{ route('admin.dashboard') }}">Dashboard</a>
             <a href="{{ route('admin.settings.edit') }}">Pengaturan</a>
             <a href="{{ route('admin.facilities.index') }}">Fasilitas</a>
-            <a href="{{ route('admin.programs.index') }}">Program</a>
+            <a href="{{ route('admin.programs.index') }}">Alur Pendaftaran</a>
             <a href="{{ route('admin.graduates.index') }}">Lulusan</a>
+            <a href="{{ route('admin.graduate-stats.index') }}">Statistik Lulusan</a>
             <a href="{{ route('admin.faqs.index') }}">QnA</a>
+            <a href="{{ route('admin.galleries.index') }}">Galeri</a>
             <a href="{{ route('admin.activity-logs.index') }}">Log Aktivitas</a>
 
             <form action="{{ route('logout') }}" method="POST" class="mt-4">
@@ -72,6 +96,9 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+
+@stack('scripts')
 </body>
 </html>
 ```

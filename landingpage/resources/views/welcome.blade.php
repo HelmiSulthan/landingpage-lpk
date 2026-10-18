@@ -96,11 +96,32 @@
             align-items: center;
             position: relative;
             overflow: hidden;
-            background:
-                linear-gradient(90deg, rgba(255, 255, 255, .98) 0%, rgba(255, 255, 255, .92) 48%, rgba(255, 255, 255, .25) 100%),
-                url('https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=1800&q=80');
-            background-size: cover;
-            background-position: center;
+        }
+
+        .hero-slide {
+            position: absolute;
+            inset: 0;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center right;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+
+        .hero-slide.active {
+            opacity: 1;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(255, 255, 255, .98) 0%, rgba(255, 255, 255, .92) 48%, rgba(255, 255, 255, .25) 100%);
+            z-index: 1;
+        }
+
+        .hero .container {
+            position: relative;
+            z-index: 2;
         }
 
         .hero-content {
@@ -181,14 +202,18 @@
         /* PROFILE */
         .profile-image {
             width: 100%;
-            height: 450px;
-            object-fit: cover;
+            max-width: 400px;
+            height: auto;
             border-radius: 20px;
+            display: block;
+            margin: 0 auto;
         }
 
         .profile-text {
             line-height: 1.9;
             color: #64748b;
+            overflow-wrap: break-word;
+            word-break: break-word;
         }
 
         .profile-list {
@@ -253,6 +278,57 @@
             font-weight: 800;
         }
 
+        /* CSS counter untuk misi dari Quill */
+        .mission-rendered {
+            counter-reset: mission-counter;
+        }
+
+        .mission-rendered p,
+        .mission-rendered li {
+            counter-increment: mission-counter;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            margin-bottom: 18px;
+            color: #374151;
+            line-height: 1.7;
+            list-style: none;
+        }
+
+        .mission-rendered p::before,
+        .mission-rendered li::before {
+            content: counter(mission-counter, decimal-leading-zero);
+            min-width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #fee2e2;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .mission-rendered ol,
+        .mission-rendered ul {
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Override warna counter di vision-card (background merah) */
+        .vision-rendered p::before,
+        .vision-rendered li::before {
+            background: rgba(255, 255, 255, .2);
+            color: white;
+        }
+
+        .vision-rendered p,
+        .vision-rendered li {
+            color: rgba(255, 255, 255, .95);
+        }
+
         /* FACILITIES */
         .facility-section {
             background: #f8fafc;
@@ -265,6 +341,9 @@
             height: 100%;
             border: 1px solid #e5e7eb;
             transition: .3s;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
         }
 
         .facility-card:hover {
@@ -303,48 +382,6 @@
             color: var(--gray);
             line-height: 1.7;
             margin: 0;
-        }
-
-        /* PROGRAM */
-        .program-card {
-            border-radius: 18px;
-            overflow: hidden;
-            border: 1px solid #e5e7eb;
-            height: 100%;
-            background: white;
-            display: flex;
-            flex-direction: column;
-            cursor: pointer;
-            transition: .3s;
-        }
-
-        .program-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, .08);
-        }
-
-        .program-card img {
-            width: 100%;
-            height: 210px;
-            object-fit: cover;
-        }
-
-        .program-content {
-            padding: 25px;
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-        }
-
-        .program-content h4 {
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-
-        .program-content p {
-            color: var(--gray);
-            line-height: 1.7;
-            /* Truncate: tampilkan max 3 baris */
             display: -webkit-box;
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
@@ -352,7 +389,7 @@
             flex: 1;
         }
 
-        .program-detail-btn {
+        .facility-detail-btn {
             margin-top: 16px;
             font-size: 14px;
             font-weight: 600;
@@ -366,38 +403,80 @@
             transition: .2s;
         }
 
-        .program-detail-btn:hover {
+        .facility-detail-btn:hover {
             background: var(--primary);
             color: white;
         }
 
-        /* Modal program */
-        .modal-program .modal-header {
-            border-bottom: none;
-            padding-bottom: 0;
+        /* ALUR PENDAFTARAN */
+        .alur-card {
+            position: relative;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 28px 24px 24px;
+            height: 100%;
+            transition: .3s;
+            display: flex;
+            flex-direction: column;
         }
 
-        .modal-program .modal-img {
-            width: 100%;
-            max-height: 280px;
-            object-fit: cover;
-            border-radius: 12px;
-            margin-bottom: 20px;
+        .alur-card:hover {
+            box-shadow: 0 12px 30px rgba(0,0,0,.08);
+            transform: translateY(-4px);
         }
 
-        .modal-program .modal-body {
-            padding: 28px;
-        }
-
-        .modal-program .modal-title {
-            font-size: 22px;
+        .alur-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
             font-weight: 800;
+            font-size: 16px;
+            margin-bottom: 16px;
+            flex-shrink: 0;
         }
 
-        .modal-program .modal-desc {
+        .alur-card h4 {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .alur-card p {
             color: var(--gray);
-            line-height: 1.8;
-            white-space: pre-line;
+            font-size: 14px;
+            line-height: 1.75;
+            margin: 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .alur-detail-btn {
+            margin-top: 14px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary);
+            background: #fee2e2;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            align-self: flex-start;
+            transition: .2s;
+        }
+
+        .alur-detail-btn:hover {
+            background: var(--primary);
+            color: white;
         }
 
         /* STATISTIC */
@@ -495,6 +574,65 @@
             font-size: 15px;
         }
 
+        /* GALLERY */
+        .gallery-section {
+            background: #f8fafc;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 14px;
+            overflow: hidden;
+            cursor: pointer;
+            aspect-ratio: 4/3;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: .4s;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.08);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,.85) 0%, rgba(0,0,0,.2) 60%, transparent 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 20px;
+            opacity: 0;
+            transition: .3s;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+
+        .gallery-overlay h5 {
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .gallery-overlay p {
+            color: rgba(255,255,255,.8);
+            font-size: 13px;
+            margin: 0;
+        }
+
         /* CTA */
         .cta {
             padding: 80px 0;
@@ -533,6 +671,18 @@
             text-decoration: none;
             font-weight: 700;
             display: inline-block;
+        }
+
+        /* SCROLL FADE IN */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(36px);
+            transition: opacity .7s ease, transform .7s ease;
+        }
+
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         /* FOOTER */
@@ -582,9 +732,10 @@
         @media (max-width: 768px) {
             .hero {
                 min-height: 600px;
-                background:
-                    linear-gradient(rgba(255, 255, 255, .93), rgba(255, 255, 255, .93)),
-                    url('https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=1200&q=80');
+            }
+
+            .hero-overlay {
+                background: linear-gradient(rgba(255, 255, 255, .93), rgba(255, 255, 255, .93));
             }
 
             section {
@@ -614,10 +765,41 @@
             overflow-x: auto;
             overflow-y: hidden;
             padding: 10px 4px 20px;
-            scroll-snap-type: x mandatory;
-            scroll-behavior: smooth;
+            scroll-snap-type: none;
             -webkit-overflow-scrolling: touch;
         }
+
+        .slider-wrapper {
+            position: relative;
+        }
+
+        .slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-60%);
+            z-index: 10;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: none;
+            background: white;
+            box-shadow: 0 4px 14px rgba(0,0,0,.12);
+            color: var(--dark);
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .slider-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .slider-btn.prev { left: -20px; }
+        .slider-btn.next { right: -20px; }
 
         .facility-slider>*,
         .graduate-slider>* {
@@ -698,7 +880,7 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="#program">Program</a>
+                        <a class="nav-link" href="#program">Alur Pendaftaran</a>
                     </li>
 
                     <li class="nav-item">
@@ -707,6 +889,10 @@
 
                     <li class="nav-item">
                         <a class="nav-link" href="#qna">QnA</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#galeri">Galeri</a>
                     </li>
 
                     <li class="nav-item ms-lg-3 mt-3 mt-lg-0">
@@ -725,6 +911,18 @@
     <!-- HERO -->
     <section class="hero" id="beranda">
 
+        @php
+            $heroSlides = $heroImages->isEmpty()
+                ? ['https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=1800&q=80']
+                : $heroImages->map(fn($img) => asset('storage/' . $img->image))->toArray();
+        @endphp
+
+        @foreach($heroSlides as $slide)
+        <div class="hero-slide {{ $loop->first ? 'active' : '' }}" style="background-image: url('{{ $slide }}')"></div>
+        @endforeach
+
+        <div class="hero-overlay"></div>
+
         <div class="container">
 
             <div class="hero-content">
@@ -738,13 +936,13 @@
                 </h1>
 
                 <p>
-                    {{ $setting->hero_description ?? 'Mempersiapkan generasi muda Indonesia untuk bekerja di Jepang.' }}
+                    {!! \App\Models\Setting::cleanHtml($setting->hero_description) ?: 'Mempersiapkan generasi muda Indonesia untuk bekerja di Jepang.' !!}
                 </p>
 
                 <div class="hero-buttons">
 
                     <a href="#program" class="btn-primary-custom">
-                        Lihat Program
+                        Lihat Alur Pendaftaran
                     </a>
 
                     <a href="#profil" class="btn-outline-custom">
@@ -761,7 +959,7 @@
 
 
     <!-- PROFIL -->
-    <section id="profil">
+    <section id="profil" class="fade-in-section">
 
         <div class="container">
 
@@ -769,50 +967,41 @@
 
                 <div class="col-lg-6">
 
-                    <img
-                        src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1000&q=80"
-                        class="profile-image"
-                        alt="Pelatihan Siswa">
+                    @if($setting->leader_photo)
+                        <img
+                            src="{{ asset('storage/' . $setting->leader_photo) }}"
+                            class="profile-image"
+                            alt="{{ $setting->leader_name ?? 'Atasan LPK' }}">
+                        @if($setting->leader_name)
+                        <div class="text-center mt-3">
+                            <div class="fw-bold fs-5">{{ $setting->leader_name }}</div>
+                            @if($setting->leader_position)
+                            <div style="color:var(--primary);font-weight:600;font-size:14px">{{ $setting->leader_position }}</div>
+                            @endif
+                        </div>
+                        @endif
+                    @else
+                        <img
+                            src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1000&q=80"
+                            class="profile-image"
+                            alt="Pelatihan Siswa">
+                    @endif
 
                 </div>
 
                 <div class="col-lg-6">
 
                     <div class="section-label">
-                        Profil Lembaga
+                        KELAS JEPANG PANGANDARAN
                     </div>
 
                     <h2 class="section-title">
                         Membentuk SDM Indonesia yang Siap Bersaing
                     </h2>
 
-                    <p class="profile-text">
-                        {{ $setting->profile ?? 'Profil lembaga belum tersedia.' }}
-                    </p>
-
-                    <ul class="profile-list">
-
-                        <li>
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span>Pelatihan bahasa Jepang secara bertahap</span>
-                        </li>
-
-                        <li>
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span>Pembekalan keterampilan kerja</span>
-                        </li>
-
-                        <li>
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span>Pembinaan disiplin dan budaya kerja Jepang</span>
-                        </li>
-
-                        <li>
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span>Pendampingan persiapan kerja ke Jepang</span>
-                        </li>
-
-                    </ul>
+                    <div class="profile-text">
+                        {!! str_replace('&nbsp;', ' ', $setting->profile ?? 'Profil lembaga belum tersedia.') !!}
+                    </div>
 
                 </div>
 
@@ -824,7 +1013,7 @@
 
 
     <!-- VISI MISI -->
-    <section id="visi-misi" class="bg-light">
+    <section id="visi-misi" class="bg-light fade-in-section">
 
         <div class="container">
 
@@ -837,11 +1026,6 @@
                 <h2 class="section-title">
                     Komitmen Kami
                 </h2>
-
-                <p>
-                    {{ $setting->vision }}
-                </p>
-
             </div>
 
             <div class="row g-4">
@@ -856,9 +1040,9 @@
                             Visi
                         </h3>
 
-                        <p>
-                            {{ $setting->vision ?? 'Visi belum tersedia.' }}
-                        </p>
+                        <div class="mission-rendered vision-rendered">
+                            {!! \App\Models\Setting::cleanHtml($setting->vision) ?: '<p>Visi belum tersedia.</p>' !!}
+                        </div>
 
                     </div>
 
@@ -873,23 +1057,9 @@
                             Misi
                         </h3>
 
-                        @php
-                            $misiItems = array_filter(
-                                array_map('trim', explode("\n", $setting->mission ?? '')),
-                                fn($line) => $line !== ''
-                            );
-                        @endphp
-
-                        @forelse(array_values($misiItems) as $index => $misi)
-                        <div class="mission-item">
-                            <div class="mission-number">
-                                {{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
-                            </div>
-                            <p>{{ $misi }}</p>
+                        <div class="mission-rendered">
+                            {!! \App\Models\Setting::cleanHtml($setting->mission) ?: '<p class="text-muted">Misi belum tersedia.</p>' !!}
                         </div>
-                        @empty
-                        <p class="text-muted">Misi belum tersedia.</p>
-                        @endforelse
 
                     </div>
 
@@ -903,7 +1073,7 @@
 
 
     <!-- FASILITAS -->
-    <section id="fasilitas" class="facility-section">
+    <section id="fasilitas" class="facility-section fade-in-section">
 
         <div class="container">
 
@@ -925,13 +1095,24 @@
 
             </div>
 
-            <div class="facility-slider">
+            <div class="slider-wrapper">
+                <button class="slider-btn prev" data-target="facilitySlider">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+
+                <div class="facility-slider" id="facilitySlider">
 
                 @forelse($facilities as $facility)
 
                 <div>
 
-                    <div class="facility-card">
+                    <div class="facility-card"
+                         data-bs-toggle="modal"
+                         data-bs-target="#facilityModal"
+                         data-name="{{ $facility->name }}"
+                         data-description="{{ $facility->description }}"
+                         data-icon="{{ $facility->icon ?? 'bi bi-building' }}"
+                         data-image="{{ $facility->image ? asset('storage/' . $facility->image) : '' }}">
 
                         @if($facility->image)
                             <img
@@ -944,13 +1125,13 @@
                             </div>
                         @endif
 
-                        <h4>
-                            {{ $facility->name }}
-                        </h4>
+                        <h4>{{ $facility->name }}</h4>
 
-                        <p>
-                            {{ $facility->description }}
-                        </p>
+                        <p>{{ strip_tags($facility->description) }}</p>
+
+                        <button class="facility-detail-btn" type="button">
+                            Lihat Detail <i class="bi bi-arrow-right ms-1"></i>
+                        </button>
 
                     </div>
 
@@ -972,60 +1153,87 @@
 
             </div>
 
+                <button class="slider-btn next" data-target="facilitySlider">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+            </div>
+
         </div>
 
     </section>
 
 
-    <!-- PROGRAM -->
-    <section id="program">
+    <!-- MODAL DETAIL FASILITAS -->
+    <div class="modal fade modal-program" id="facilityModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+                <div class="modal-body p-0">
+
+                    <div id="facilityModalImg" class="d-none">
+                        <img id="facilityModalImgEl" src="" alt="" style="width:100%; max-height:300px; object-fit:cover;">
+                    </div>
+
+                    <div class="p-4">
+
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div class="d-flex align-items-center gap-3">
+                                <div id="facilityModalIcon" class="facility-icon mb-0" style="flex-shrink:0;margin-bottom:0!important"></div>
+                                <h4 id="facilityModalName" class="modal-title mb-0"></h4>
+                            </div>
+                            <button type="button" class="btn-close ms-3" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                        </div>
+
+                        <div class="section-label mb-2">Fasilitas</div>
+
+                        <p id="facilityModalDesc" class="modal-desc" style="color:var(--gray);line-height:1.8;white-space:pre-line"></p>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ALUR PENDAFTARAN -->
+    <section id="program" class="fade-in-section">
 
         <div class="container">
 
             <div class="text-center mb-5">
 
                 <div class="section-label">
-                    Program Pelatihan
+                    Alur Pendaftaran
                 </div>
 
                 <h2 class="section-title">
-                    Persiapkan Dirimu Sebelum ke Jepang
+                    Langkah-Langkah Bergabung
                 </h2>
 
             </div>
 
             <div class="row g-4">
 
-                @forelse($programs as $program)
+                @forelse($programs as $index => $program)
 
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6 col-lg-3">
 
-                    <div class="program-card"
+                    <div class="alur-card"
                          data-bs-toggle="modal"
-                         data-bs-target="#programModal"
+                         data-bs-target="#alurModal"
+                         data-nomor="{{ $loop->iteration }}"
                          data-name="{{ $program->name }}"
-                         data-description="{{ $program->description }}"
-                         data-image="{{ $program->image ? asset('storage/' . $program->image) : '' }}">
+                         data-description="{{ \App\Models\Setting::cleanHtml($program->description) }}">
 
-                        @if($program->image)
+                        <div class="alur-number">{{ $loop->iteration }}</div>
 
-                        <img
-                            src="{{ asset('storage/' . $program->image) }}"
-                            alt="{{ $program->name }}">
+                        <h4>{{ $program->name }}</h4>
 
-                        @endif
+                        <p>{{ strip_tags(str_replace('&nbsp;', ' ', $program->description)) }}</p>
 
-                        <div class="program-content">
-
-                            <h4>{{ $program->name }}</h4>
-
-                            <p>{{ $program->description }}</p>
-
-                            <button class="program-detail-btn" type="button">
-                                Lihat Detail <i class="bi bi-arrow-right ms-1"></i>
-                            </button>
-
-                        </div>
+                        <button class="alur-detail-btn" type="button">
+                            Selengkapnya <i class="bi bi-arrow-right ms-1"></i>
+                        </button>
 
                     </div>
 
@@ -1034,11 +1242,7 @@
                 @empty
 
                 <div class="col-12 text-center">
-
-                    <p class="text-muted">
-                        Belum ada program pelatihan.
-                    </p>
-
+                    <p class="text-muted">Belum ada alur pendaftaran.</p>
                 </div>
 
                 @endforelse
@@ -1049,29 +1253,20 @@
 
     </section>
 
-    <!-- MODAL DETAIL PROGRAM -->
-    <div class="modal fade modal-program" id="programModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
+    <!-- MODAL DETAIL ALUR PENDAFTARAN -->
+    <div class="modal fade" id="alurModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
-                <div class="modal-body p-0">
-
-                    <div id="programModalImg" class="d-none">
-                        <img id="programModalImgEl" src="" alt="" style="width:100%; max-height:300px; object-fit:cover;">
-                    </div>
-
-                    <div class="p-4">
-
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <h4 id="programModalName" class="modal-title mb-0"></h4>
-                            <button type="button" class="btn-close ms-3" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                <div class="modal-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="alur-number mb-0" id="alurModalNomor" style="margin-bottom:0!important"></div>
+                            <h5 id="alurModalName" class="fw-bold mb-0"></h5>
                         </div>
-
-                        <div class="section-label mb-2">Program Pelatihan</div>
-
-                        <p id="programModalDesc" class="modal-desc"></p>
-
+                        <button type="button" class="btn-close ms-2" data-bs-dismiss="modal" aria-label="Tutup"></button>
                     </div>
-
+                    <div class="section-label mb-2">Alur Pendaftaran</div>
+                    <div id="alurModalDesc" style="color:var(--gray);line-height:1.8;font-size:15px"></div>
                 </div>
             </div>
         </div>
@@ -1079,7 +1274,7 @@
 
 
     <!-- STATISTIC -->
-    <section class="stats">
+    <section class="stats fade-in-section">
 
         <div class="container">
 
@@ -1089,8 +1284,8 @@
 
                     <div class="stat-item">
 
-                        <div class="stat-number">
-                            {{ $setting->students_count }}+
+                        <div class="stat-number" data-target="{{ (int)($setting->students_count ?? 0) }}">
+                            0+
                         </div>
 
                         <div class="stat-label">
@@ -1106,8 +1301,8 @@
 
                     <div class="stat-item">
 
-                        <div class="stat-number">
-                            {{ $setting->graduates_count }}+
+                        <div class="stat-number" data-target="{{ (int)($setting->graduates_count ?? 0) }}">
+                            0+
                         </div>
 
                         <div class="stat-label">
@@ -1123,8 +1318,8 @@
 
                     <div class="stat-item">
 
-                        <div class="stat-number">
-                            {{ $setting->japan_count }}+
+                        <div class="stat-number" data-target="{{ (int)($setting->japan_count ?? 0) }}">
+                            0+
                         </div>
 
                         <div class="stat-label">
@@ -1140,8 +1335,8 @@
 
                     <div class="stat-item">
 
-                        <div class="stat-number">
-                            {{ $setting->experience_years }}+
+                        <div class="stat-number" data-target="{{ (int)($setting->experience_years ?? 0) }}">
+                            0+
                         </div>
 
                         <div class="stat-label">
@@ -1160,7 +1355,7 @@
 
 
     <!-- LULUSAN -->
-    <section id="lulusan">
+    <section id="lulusan" class="fade-in-section">
 
         <div class="container">
 
@@ -1182,7 +1377,12 @@
 
             </div>
 
-            <div class="graduate-slider">
+            <div class="slider-wrapper">
+                <button class="slider-btn prev" data-target="graduateSlider">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+
+                <div class="graduate-slider" id="graduateSlider">
 
                 @forelse($graduates as $graduate)
 
@@ -1207,7 +1407,7 @@
                         </div>
 
                         <p class="mt-3">
-                            "{{ $graduate->description }}"
+                            {!! $graduate->description !!}
                         </p>
 
                     </div>
@@ -1228,13 +1428,69 @@
 
             </div>
 
+                <button class="slider-btn next" data-target="graduateSlider">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+            </div>
+
         </div>
 
     </section>
 
 
+    <!-- STATISTIK LULUSAN -->
+    @if($graduateStats->isNotEmpty())
+    <section class="fade-in-section" style="background:#f8fafc">
+
+        <div class="container">
+
+            <div class="text-center mb-5">
+                <div class="section-label">Data Lulusan</div>
+                <h2 class="section-title">Statistik Lulusan Kami</h2>
+            </div>
+
+            <div class="row g-4 justify-content-center">
+
+                @foreach($graduateStats as $category => $items)
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm" style="border-radius:16px;overflow:hidden">
+                        <div class="card-header fw-bold text-white text-center py-3"
+                             style="background:var(--primary);font-size:16px">
+                            {{ $category }}
+                        </div>
+                        <div class="card-body p-0">
+                            @foreach($items as $i => $item)
+                            <div class="d-flex justify-content-between align-items-center px-4 py-3
+                                        {{ $i % 2 === 0 ? '' : 'bg-light' }}">
+                                <span style="color:#374151;font-weight:500">{{ $item->label }}</span>
+                                <span class="fw-bold" style="color:var(--primary)">
+                                    {{ number_format($item->total) }}
+                                    <small class="text-muted fw-normal">orang</small>
+                                </span>
+                            </div>
+                            @endforeach
+                            <div class="d-flex justify-content-between align-items-center px-4 py-3 border-top">
+                                <span class="fw-bold">Total</span>
+                                <span class="fw-bold" style="color:var(--primary)">
+                                    {{ number_format($items->sum('total')) }}
+                                    <small class="text-muted fw-normal">orang</small>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+
+            </div>
+
+        </div>
+
+    </section>
+    @endif
+
+
     <!-- QnA -->
-    <section id="qna" class="qna-section">
+    <section id="qna" class="qna-section fade-in-section">
 
         <div class="container">
 
@@ -1282,7 +1538,7 @@
                              aria-labelledby="faqHeading{{ $faq->id }}"
                              data-bs-parent="#faqAccordion">
                             <div class="accordion-body">
-                                {!! nl2br(e($faq->answer)) !!}
+                                {!! $faq->answer !!}
                             </div>
                         </div>
 
@@ -1331,6 +1587,84 @@
     </section>
 
 
+    <!-- GALERI -->
+    <section id="galeri" class="gallery-section fade-in-section">
+
+        <div class="container">
+
+            <div class="text-center mb-5">
+
+                <div class="section-label">
+                    Galeri
+                </div>
+
+                <h2 class="section-title">
+                    Dokumentasi Kegiatan
+                </h2>
+
+                <p class="section-description mx-auto">
+                    Momen-momen kegiatan pembelajaran dan persiapan peserta kami.
+                </p>
+
+            </div>
+
+            @if($galleries->isEmpty())
+
+                <p class="text-center text-muted">Belum ada dokumentasi.</p>
+
+            @else
+
+                <div class="gallery-grid">
+
+                    @foreach($galleries as $gallery)
+
+                    <div class="gallery-item"
+                         data-bs-toggle="modal"
+                         data-bs-target="#galleryModal"
+                         data-title="{{ $gallery->title }}"
+                         data-description="{{ $gallery->description ?? '' }}"
+                         data-image="{{ asset('storage/' . $gallery->image) }}">
+
+                        <img src="{{ asset('storage/' . $gallery->image) }}" alt="{{ $gallery->title }}">
+
+                        <div class="gallery-overlay">
+                            <h5>{{ $gallery->title }}</h5>
+                            @if($gallery->description)
+                            <p>{{ \Illuminate\Support\Str::limit($gallery->description, 60) }}</p>
+                            @endif
+                        </div>
+
+                    </div>
+
+                    @endforeach
+
+                </div>
+
+            @endif
+
+        </div>
+
+    </section>
+
+    <!-- MODAL DETAIL GALERI -->
+    <div class="modal fade" id="galleryModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+                <div class="modal-body p-0">
+                    <div class="position-relative">
+                        <img id="galleryModalImg" src="" alt="" style="width:100%; max-height:400px; object-fit:cover;">
+                        <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                    </div>
+                    <div class="p-4">
+                        <h4 id="galleryModalTitle" class="fw-bold mb-2"></h4>
+                        <p id="galleryModalDesc" class="text-muted mb-0" style="line-height: 1.8;"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <!-- FOOTER -->
     <footer>
 
@@ -1374,7 +1708,7 @@
                         </li>
 
                         <li>
-                            <a href="#program">Program</a>
+                            <a href="#program">Alur Pendaftaran</a>
                         </li>
 
                         <li>
@@ -1383,6 +1717,10 @@
 
                         <li>
                             <a href="#qna">QnA</a>
+                        </li>
+
+                        <li>
+                            <a href="#galeri">Galeri</a>
                         </li>
 
                     </ul>
@@ -1436,27 +1774,162 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // Isi modal program dengan data dari card yang diklik
-        const programModal = document.getElementById('programModal');
-        programModal.addEventListener('show.bs.modal', function (e) {
-            const card    = e.relatedTarget;
-            const name    = card.dataset.name;
-            const desc    = card.dataset.description;
-            const image   = card.dataset.image;
+        // ── FADE IN ON SCROLL ────────────────────────────────────────────
+        const fadeObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    fadeObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12 });
 
-            document.getElementById('programModalName').textContent = name;
-            document.getElementById('programModalDesc').textContent = desc;
+        document.querySelectorAll('.fade-in-section').forEach(el => fadeObserver.observe(el));
 
-            const imgWrapper = document.getElementById('programModalImg');
-            const imgEl      = document.getElementById('programModalImgEl');
+        // ── COUNTER ANIMASI STATISTIK ─────────────────────────────────────
+        function animateCounter(el, target, duration) {
+            const start     = performance.now();
+            const easeOut   = t => 1 - Math.pow(1 - t, 3); // cubic ease-out
 
+            function step(now) {
+                const elapsed  = now - start;
+                const progress = Math.min(elapsed / duration, 1);
+                const value    = Math.round(easeOut(progress) * target);
+                el.textContent = value.toLocaleString('id-ID') + '+';
+                if (progress < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
+
+        const statsSection  = document.querySelector('.stats');
+        let statsAnimated   = false;
+
+        const statsObserver = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting && !statsAnimated) {
+                statsAnimated = true;
+                document.querySelectorAll('.stat-number[data-target]').forEach(el => {
+                    const target = parseInt(el.dataset.target, 10) || 0;
+                    animateCounter(el, target, 1000);
+                });
+            }
+        }, { threshold: 0.3 });
+
+        if (statsSection) statsObserver.observe(statsSection);
+
+        // ── SLIDER FASILITAS & LULUSAN ─────────────────────────────────────
+        function setupSlider(sliderId) {
+            const slider = document.getElementById(sliderId);
+            if (!slider) return;
+
+            const wrapper = slider.closest('.slider-wrapper');
+            const prevBtn = wrapper.querySelector('.prev');
+            const nextBtn = wrapper.querySelector('.next');
+
+            // Kecepatan piksel per frame (lebih kecil = lebih lambat)
+            const speed   = 0.5;
+            let paused    = false;
+            let rafId     = null;
+
+            function tick() {
+                if (!paused) {
+                    const maxScroll = slider.scrollWidth - slider.clientWidth;
+                    if (slider.scrollLeft >= maxScroll - 1) {
+                        // Balik ke awal secara instan lalu lanjut mengalir
+                        slider.scrollLeft = 0;
+                    } else {
+                        slider.scrollLeft += speed;
+                    }
+                }
+                rafId = requestAnimationFrame(tick);
+            }
+
+            rafId = requestAnimationFrame(tick);
+
+            // Pause saat hover atau touch
+            slider.addEventListener('mouseenter', () => paused = true);
+            slider.addEventListener('mouseleave', () => paused = false);
+            slider.addEventListener('touchstart',  () => paused = true,  { passive: true });
+            slider.addEventListener('touchend',    () => paused = false, { passive: true });
+
+            // Tombol prev / next geser satu item
+            const itemWidth = () => (slider.firstElementChild?.offsetWidth ?? 300) + 24;
+            prevBtn?.addEventListener('click', () => {
+                paused = true;
+                slider.scrollBy({ left: -itemWidth(), behavior: 'smooth' });
+                setTimeout(() => paused = false, 600);
+            });
+            nextBtn?.addEventListener('click', () => {
+                paused = true;
+                slider.scrollBy({ left: itemWidth(), behavior: 'smooth' });
+                setTimeout(() => paused = false, 600);
+            });
+        }
+
+        setupSlider('facilitySlider');
+        setupSlider('graduateSlider');
+
+        // ── SLIDESHOW HERO BACKGROUND ─────────────────────────────────────
+        const heroSlides = document.querySelectorAll('.hero-slide');
+        if (heroSlides.length > 1) {
+            let current = 0;
+            setInterval(() => {
+                heroSlides[current].classList.remove('active');
+                current = (current + 1) % heroSlides.length;
+                heroSlides[current].classList.add('active');
+            }, 5000);
+        }
+
+        // Isi modal fasilitas dengan data dari card yang diklik
+        const facilityModal = document.getElementById('facilityModal');
+        facilityModal.addEventListener('show.bs.modal', function (e) {
+            const card  = e.relatedTarget;
+            const name  = card.dataset.name;
+            const desc  = card.dataset.description;
+            const icon  = card.dataset.icon;
+            const image = card.dataset.image;
+
+            document.getElementById('facilityModalName').textContent = name;
+            document.getElementById('facilityModalDesc').innerHTML = desc;
+
+            // icon
+            const iconEl = document.getElementById('facilityModalIcon');
+            iconEl.innerHTML = `<i class="${icon}" style="font-size:26px"></i>`;
+
+            // gambar
+            const imgWrapper = document.getElementById('facilityModalImg');
+            const imgEl      = document.getElementById('facilityModalImgEl');
             if (image) {
                 imgEl.src = image;
                 imgEl.alt = name;
                 imgWrapper.classList.remove('d-none');
+                iconEl.style.display = 'none';
             } else {
                 imgWrapper.classList.add('d-none');
+                iconEl.style.display = 'flex';
             }
+        });
+
+        // Isi modal alur pendaftaran
+        const alurModal = document.getElementById('alurModal');
+        alurModal?.addEventListener('show.bs.modal', function (e) {
+            const card = e.relatedTarget;
+            document.getElementById('alurModalNomor').textContent = card.dataset.nomor;
+            document.getElementById('alurModalName').textContent  = card.dataset.name;
+            document.getElementById('alurModalDesc').innerHTML    = card.dataset.description;
+        });
+
+        // Isi modal galeri dengan data dari item yang diklik
+        const galleryModal = document.getElementById('galleryModal');
+        galleryModal.addEventListener('show.bs.modal', function (e) {
+            const item  = e.relatedTarget;
+            const title = item.dataset.title;
+            const desc  = item.dataset.description;
+            const image = item.dataset.image;
+
+            document.getElementById('galleryModalTitle').textContent = title;
+            document.getElementById('galleryModalDesc').textContent  = desc;
+            document.getElementById('galleryModalImg').src           = image;
+            document.getElementById('galleryModalImg').alt           = title;
         });
     </script>
 

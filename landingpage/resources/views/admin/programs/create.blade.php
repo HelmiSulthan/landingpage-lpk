@@ -1,12 +1,12 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Tambah Program')
+@section('title', 'Tambah Alur Pendaftaran')
 
 @section('content')
 
 <div class="container-fluid">
 
-    <h1 class="mb-4">Tambah Program</h1>
+    <h1 class="mb-4">Tambah Alur Pendaftaran</h1>
 
     <form action="{{ route('admin.programs.store') }}" method="POST" enctype="multipart/form-data">
         @csrf

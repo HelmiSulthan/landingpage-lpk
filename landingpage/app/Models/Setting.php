@@ -14,6 +14,9 @@ class Setting extends Model
         'profile',
         'vision',
         'mission',
+        'leader_photo',
+        'leader_name',
+        'leader_position',
         'address',
         'phone',
         'email',
@@ -23,6 +26,14 @@ class Setting extends Model
         'japan_count',
         'experience_years',
     ];
+
+    /**
+     * Bersihkan &nbsp; dari konten Quill agar bisa word-wrap normal.
+     */
+    public static function cleanHtml(?string $html): string
+    {
+        return str_replace('&nbsp;', ' ', $html ?? '');
+    }
 
     /**
      * Normalisasi nomor WhatsApp menjadi URL wa.me (hanya angka).

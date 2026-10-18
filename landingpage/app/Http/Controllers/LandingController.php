@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Facility;
 use App\Models\Faq;
+use App\Models\Gallery;
 use App\Models\Graduate;
+use App\Models\GraduateStat;
+use App\Models\HeroImage;
 use App\Models\Program;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Cache;
@@ -13,8 +16,6 @@ class LandingController extends Controller
 {
     public function index()
     {
-        // Cache selama 1 jam — data hanya berubah saat admin menyimpan perubahan.
-        // Cache di-clear otomatis dari SettingController, FacilityController, dll. (lihat update/store/destroy)
         $setting = Cache::remember('landing.setting', 3600, function () {
             return Setting::firstOrCreate(
                 [],
@@ -54,12 +55,28 @@ class LandingController extends Controller
             return Faq::latest()->get();
         });
 
+        $galleries = Cache::remember('landing.galleries', 3600, function () {
+            return Gallery::latest()->get();
+        });
+
+        $heroImages = Cache::remember('landing.hero_images', 3600, function () {
+            return HeroImage::latest()->get();
+        });
+
+        $graduateStats = Cache::remember('landing.graduate_stats', 3600, function () {
+            return GraduateStat::orderBy('category')->orderBy('total', 'desc')->get()
+                ->groupBy('category');
+        });
+
         return view('welcome', compact(
             'setting',
             'facilities',
             'programs',
             'graduates',
-            'faqs'
+            'faqs',
+            'galleries',
+            'heroImages',
+            'graduateStats'
         ));
     }
 }
