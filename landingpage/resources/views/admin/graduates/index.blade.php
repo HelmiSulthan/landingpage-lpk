@@ -15,6 +15,36 @@
     <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
+    {{-- CARD LINK GOOGLE DRIVE --}}
+    <div class="card p-4 mb-4">
+        <h5 class="mb-1"><i class="bi bi-google me-2 text-danger"></i>Link Google Drive Lulusan</h5>
+        <p class="text-muted small mb-3">
+            Link ini akan tampil sebagai tombol <strong>"Selengkapnya"</strong> di section Lulusan pada landing page.
+            Biarkan kosong jika tidak ingin menampilkan tombol.
+        </p>
+        <form action="{{ route('admin.graduates.gdrive') }}" method="POST">
+            @csrf
+            @error('graduates_gdrive_link')
+            <div class="alert alert-danger py-2 mb-2">{{ $message }}</div>
+            @enderror
+            <div class="d-flex gap-2 align-items-center flex-wrap">
+                <input type="url"
+                       name="graduates_gdrive_link"
+                       class="form-control"
+                       value="{{ old('graduates_gdrive_link', $setting->graduates_gdrive_link ?? '') }}"
+                       placeholder="https://drive.google.com/..."
+                       style="max-width: 500px">
+                <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
+                @if($setting->graduates_gdrive_link)
+                <a href="{{ $setting->graduates_gdrive_link }}" target="_blank" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-box-arrow-up-right me-1"></i>Buka Link
+                </a>
+                @endif
+            </div>
+        </form>
+    </div>
+
+    {{-- TABEL LULUSAN --}}
     <div class="card">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">

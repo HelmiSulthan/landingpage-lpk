@@ -289,6 +289,36 @@
 
             <div class="mb-3">
 
+                <label>Instagram</label>
+
+                <input
+                    type="url"
+                    name="instagram"
+                    class="form-control"
+                    value="{{ old('instagram', $setting->instagram ?? '') }}"
+                    placeholder="https://instagram.com/username"
+                >
+
+            </div>
+
+
+            <div class="mb-3">
+
+                <label>TikTok</label>
+
+                <input
+                    type="url"
+                    name="tiktok"
+                    class="form-control"
+                    value="{{ old('tiktok', $setting->tiktok ?? '') }}"
+                    placeholder="https://tiktok.com/@username"
+                >
+
+            </div>
+
+
+            <div class="mb-3">
+
                 <label>Email</label>
 
                 <input

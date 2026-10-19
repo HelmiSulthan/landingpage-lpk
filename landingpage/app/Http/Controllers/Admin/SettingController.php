@@ -39,11 +39,14 @@ class SettingController extends Controller
             'address'          => 'nullable|string|max:255',
             'phone'            => 'nullable|string|max:30',
             'email'            => 'nullable|email',
-            'whatsapp'         => 'nullable|string|max:30',
-            'students_count'   => 'nullable|integer',
-            'graduates_count'  => 'nullable|integer',
-            'japan_count'      => 'nullable|integer',
-            'experience_years' => 'nullable|integer',
+            'whatsapp'              => 'nullable|string|max:30',
+            'instagram'             => 'nullable|url|max:255',
+            'tiktok'                => 'nullable|url|max:255',
+            'students_count'        => 'nullable|integer',
+            'graduates_count'       => 'nullable|integer',
+            'japan_count'           => 'nullable|integer',
+            'experience_years'      => 'nullable|integer',
+            'graduates_gdrive_link' => 'nullable|url|max:500',
         ]);
 
         $setting = Setting::firstOrNew([]);

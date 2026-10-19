@@ -48,6 +48,9 @@ Route::middleware(['auth', 'admin'])
             ->except('show')
             ->names('admin.graduates');
 
+        Route::post('/graduates/gdrive', [GraduateController::class, 'updateGdrive'])
+            ->name('admin.graduates.gdrive');
+
         // Statistik lulusan dari Excel
         Route::get('/graduate-stats', [GraduateStatController::class, 'index'])->name('admin.graduate-stats.index');
         Route::post('/graduate-stats/upload', [GraduateStatController::class, 'upload'])->name('admin.graduate-stats.upload');

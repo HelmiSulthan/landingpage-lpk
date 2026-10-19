@@ -1375,6 +1375,15 @@
                     yang siap bekerja di Jepang.
                 </p>
 
+                @if($setting->graduates_gdrive_link)
+                <a href="{{ $setting->graduates_gdrive_link }}"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="btn-primary-custom mt-3 d-inline-block">
+                    <i class="bi bi-google me-2"></i>Selengkapnya
+                </a>
+                @endif
+
             </div>
 
             <div class="slider-wrapper">
@@ -1752,6 +1761,30 @@
                         </li>
 
                     </ul>
+
+                    @if($setting->instagram || $setting->tiktok)
+                    <div class="d-flex gap-3 mt-3">
+
+                        @if($setting->instagram)
+                        <a href="{{ $setting->instagram }}" target="_blank" rel="noopener noreferrer"
+                           style="width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;color:white;font-size:18px;transition:.2s"
+                           onmouseover="this.style.background='#E1306C'"
+                           onmouseout="this.style.background='rgba(255,255,255,.1)'">
+                            <i class="bi bi-instagram"></i>
+                        </a>
+                        @endif
+
+                        @if($setting->tiktok)
+                        <a href="{{ $setting->tiktok }}" target="_blank" rel="noopener noreferrer"
+                           style="width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;color:white;font-size:18px;transition:.2s"
+                           onmouseover="this.style.background='#010101'"
+                           onmouseout="this.style.background='rgba(255,255,255,.1)'">
+                            <i class="bi bi-tiktok"></i>
+                        </a>
+                        @endif
+
+                    </div>
+                    @endif
 
                 </div>
 

@@ -6,6 +6,7 @@ use App\Http\Controllers\Concerns\HandlesImageUpload;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use App\Models\Graduate;
+use App\Models\Setting;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -18,8 +19,9 @@ class GraduateController extends Controller
     public function index(): View
     {
         $graduates = Graduate::latest()->paginate(10);
+        $setting   = Setting::firstOrNew([]);
 
-        return view('admin.graduates.index', compact('graduates'));
+        return view('admin.graduates.index', compact('graduates', 'setting'));
     }
 
     public function create(): View
@@ -84,6 +86,25 @@ class GraduateController extends Controller
         return redirect()
             ->route('admin.graduates.index')
             ->with('success', 'Lulusan berhasil dihapus.');
+    }
+
+    public function updateGdrive(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'graduates_gdrive_link' => 'nullable|url|max:500',
+        ]);
+
+        Setting::updateOrCreate([], [
+            'graduates_gdrive_link' => $request->input('graduates_gdrive_link'),
+        ]);
+
+        Cache::forget('landing.setting');
+
+        ActivityLog::record('update', 'Lulusan', 'Memperbarui link Google Drive lulusan');
+
+        return redirect()
+            ->route('admin.graduates.index')
+            ->with('success', 'Link Google Drive berhasil disimpan.');
     }
 
     private function validated(Request $request): array

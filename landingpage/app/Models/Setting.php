@@ -21,10 +21,13 @@ class Setting extends Model
         'phone',
         'email',
         'whatsapp',
+        'instagram',
+        'tiktok',
         'students_count',
         'graduates_count',
         'japan_count',
         'experience_years',
+        'graduates_gdrive_link',
     ];
 
     /**
