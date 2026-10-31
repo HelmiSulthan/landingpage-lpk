@@ -15,12 +15,4 @@ trait HandlesImageUpload
             Storage::disk('public')->delete($path);
         }
     }
-
-    /**
-     * Simpan file gambar ke folder yang ditentukan dan return path-nya.
-     */
-    protected function storeImage($file, string $folder): string
-    {
-        return $file->store($folder, 'public');
-    }
 }

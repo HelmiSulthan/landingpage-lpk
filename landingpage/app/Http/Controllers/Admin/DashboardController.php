@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use App\Models\Facility;
+use App\Models\Faq;
+use App\Models\Gallery;
 use App\Models\Graduate;
 use App\Models\Program;
 use Illuminate\View\View;
@@ -22,6 +24,8 @@ class DashboardController extends Controller
             'facilitiesCount'  => Facility::count(),
             'programsCount'    => Program::count(),
             'graduatesCount'   => Graduate::count(),
+            'galleriesCount'   => Gallery::count(),
+            'faqsCount'        => Faq::count(),
             'recentActivities' => $recentActivities,
         ]);
     }

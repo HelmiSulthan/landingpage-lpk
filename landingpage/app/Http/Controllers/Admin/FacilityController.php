@@ -56,8 +56,13 @@ class FacilityController extends Controller
         $data = $this->validated($request);
 
         if ($request->hasFile('image')) {
+            // Ganti dengan foto baru
             $this->deleteImage($facility->image);
             $data['image'] = $request->file('image')->store('facilities', 'public');
+        } elseif ($request->boolean('remove_image')) {
+            // Hapus foto tanpa gantinya
+            $this->deleteImage($facility->image);
+            $data['image'] = null;
         }
 
         $facility->update($data);
@@ -91,7 +96,7 @@ class FacilityController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'icon' => 'nullable|string|max:100',
+            'icon' => ['nullable', 'string', 'max:100', 'regex:/^[a-zA-Z0-9\s\-_]+$/'],
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 

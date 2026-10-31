@@ -31,7 +31,7 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $item->question }}</td>
-                        <td>{{ \Illuminate\Support\Str::limit($item->answer, 80) }}</td>
+                        <td>{{ \Illuminate\Support\Str::limit(strip_tags(str_replace('&nbsp;', ' ', $item->answer ?? '')), 80) }}</td>
                         <td>
                             <a href="{{ route('admin.faqs.edit', $item) }}" class="btn btn-sm btn-outline-primary">Edit</a>
 

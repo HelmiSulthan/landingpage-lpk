@@ -5,7 +5,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>LPK Kelas Jepang Pangandaran | Pelatihan Kerja ke Jepang</title>
+    @php
+        $metaSiteName = $setting->site_name ?: 'LPK Kelas Jepang Pangandaran';
+        $metaTagline  = $setting->tagline ?: 'Pelatihan Kerja ke Jepang';
+        $metaTitle    = "{$metaSiteName} | {$metaTagline}";
+        $metaDesc     = \Illuminate\Support\Str::limit(
+            \App\Models\Setting::toPlainText($setting->hero_description ?: $setting->profile),
+            160
+        ) ?: 'Lembaga pelatihan dan persiapan kerja ke Jepang resmi dan terpercaya.';
+        $metaImage    = $heroImages->isNotEmpty()
+            ? asset('storage/' . $heroImages->first()->image)
+            : asset('images/lpk-kelas-jepang-pangandaran.png');
+    @endphp
+
+    <title>{{ $metaTitle }}</title>
+    <meta name="description" content="{{ $metaDesc }}">
+    <link rel="canonical" href="{{ url('/') }}">
+    <link rel="icon" type="image/png" href="{{ asset('images/lpk-kelas-jepang-pangandaran.png') }}">
+
+    <!-- Open Graph / Social Preview -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url('/') }}">
+    <meta property="og:title" content="{{ $metaTitle }}">
+    <meta property="og:description" content="{{ $metaDesc }}">
+    <meta property="og:image" content="{{ $metaImage }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $metaTitle }}">
+    <meta name="twitter:description" content="{{ $metaDesc }}">
+    <meta name="twitter:image" content="{{ $metaImage }}">
+
+    <!-- Structured Data JSON-LD -->
+    <script type="application/ld+json">
+        {!! json_encode([
+            '@context' => 'https://schema.org',
+            '@type' => 'EducationalOrganization',
+            'name' => $metaSiteName,
+            'description' => $metaDesc,
+            'url' => url('/'),
+            'logo' => asset('images/lpk-kelas-jepang-pangandaran.png'),
+            'address' => $setting->address ? [
+                '@type' => 'PostalAddress',
+                'streetAddress' => $setting->address,
+                'addressCountry' => 'ID',
+            ] : null,
+            'telephone' => $setting->phone ?: $setting->whatsapp ?: null,
+            'email' => $setting->email ?: null,
+        ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+    </script>
 
     <!-- Google Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -41,6 +87,20 @@
 
         html {
             scroll-behavior: smooth;
+        }
+
+        /* QUILL CONTENT GLOBAL */
+        .hero-desc p,
+        .hero-desc li,
+        .profile-text p,
+        .profile-text li,
+        .mission-rendered p,
+        .mission-rendered li,
+        .vision-rendered p,
+        .vision-rendered li {
+            overflow-wrap: break-word;
+            word-break: break-word;
+            white-space: normal;
         }
 
         /* NAVBAR */
@@ -101,9 +161,9 @@
         .hero-slide {
             position: absolute;
             inset: 0;
-            background-size: contain;
+            background-size: cover;
             background-repeat: no-repeat;
-            background-position: center right;
+            background-position: center;
             opacity: 0;
             transition: opacity 1.5s ease-in-out;
         }
@@ -126,6 +186,7 @@
 
         .hero-content {
             max-width: 650px;
+            overflow: hidden;
         }
 
         .badge-japan {
@@ -155,6 +216,9 @@
             line-height: 1.8;
             color: #4b5563;
             margin-bottom: 30px;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            white-space: normal;
         }
 
         .hero-buttons {
@@ -202,7 +266,7 @@
         /* PROFILE */
         .profile-image {
             width: 100%;
-            max-width: 400px;
+            max-width: 300px;
             height: auto;
             border-radius: 20px;
             display: block;
@@ -212,8 +276,17 @@
         .profile-text {
             line-height: 1.9;
             color: #64748b;
-            overflow-wrap: break-word;
-            word-break: break-word;
+        }
+
+        .profile-text p,
+        .profile-text span,
+        .profile-text li {
+            overflow-wrap: normal;
+            word-break: normal;
+            white-space: normal;
+            color: #64748b !important;
+            background: none !important;
+            font-size: inherit !important;
         }
 
         .profile-list {
@@ -337,7 +410,7 @@
         .facility-card {
             background: white;
             border-radius: 18px;
-            padding: 30px;
+            padding: 28px;
             height: 100%;
             border: 1px solid #e5e7eb;
             transition: .3s;
@@ -347,7 +420,7 @@
         }
 
         .facility-card:hover {
-            transform: translateY(-7px);
+            transform: translateY(-5px);
             box-shadow: 0 15px 35px rgba(0, 0, 0, .08);
         }
 
@@ -362,14 +435,28 @@
             justify-content: center;
             font-size: 26px;
             margin-bottom: 20px;
+            flex-shrink: 0;
         }
 
-        .facility-img {
+        .facility-card-img {
             width: 100%;
-            height: 180px;
+            height: 190px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 18px;
+            flex-shrink: 0;
+            background: #f1f5f9;
+        }
+
+        .facility-card-img img {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
-            border-radius: 10px;
-            margin-bottom: 20px;
+            transition: transform .4s ease;
+        }
+
+        .facility-card:hover .facility-card-img img {
+            transform: scale(1.05);
         }
 
         .facility-card h4 {
@@ -382,11 +469,10 @@
             color: var(--gray);
             line-height: 1.7;
             margin: 0;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
             flex: 1;
+            white-space: normal;
+            word-break: break-word;
+            overflow-wrap: break-word;
         }
 
         .facility-detail-btn {
@@ -853,7 +939,7 @@
         <div class="container">
 
             <a class="navbar-brand" href="#beranda">
-                {{ $setting->site_name ?? 'LPK Kelas Jepang Pangandaran' }}
+                <img src="{{ asset('images/lpk-kelas-jepang-pangandaran.png') }}" alt="Logo LPK" style="height:48px;width:auto;object-fit:contain">
             </a>
 
             <button class="navbar-toggler"
@@ -935,9 +1021,9 @@
                     {{ $setting->hero_title ?? 'Pelatihan Kerja ke Jepang' }}
                 </h1>
 
-                <p>
-                    {!! \App\Models\Setting::cleanHtml($setting->hero_description) ?: 'Mempersiapkan generasi muda Indonesia untuk bekerja di Jepang.' !!}
-                </p>
+                <div class="hero-desc" style="font-size:18px;line-height:1.8;color:#4b5563;margin-bottom:30px;word-break:break-word;overflow-wrap:break-word;white-space:normal">
+                    {{ \Illuminate\Support\Str::limit(\App\Models\Setting::toPlainText($setting->hero_description), 200) ?: 'Mempersiapkan generasi muda Indonesia untuk bekerja di Jepang.' }}
+                </div>
 
                 <div class="hero-buttons">
 
@@ -971,6 +1057,7 @@
                         <img
                             src="{{ asset('storage/' . $setting->leader_photo) }}"
                             class="profile-image"
+                            loading="lazy"
                             alt="{{ $setting->leader_name ?? 'Atasan LPK' }}">
                         @if($setting->leader_name)
                         <div class="text-center mt-3">
@@ -984,6 +1071,7 @@
                         <img
                             src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1000&q=80"
                             class="profile-image"
+                            loading="lazy"
                             alt="Pelatihan Siswa">
                     @endif
 
@@ -1000,7 +1088,7 @@
                     </h2>
 
                     <div class="profile-text">
-                        {!! str_replace('&nbsp;', ' ', $setting->profile ?? 'Profil lembaga belum tersedia.') !!}
+                        {!! \App\Models\Setting::cleanHtml($setting->profile) ?: 'Profil lembaga belum tersedia.' !!}
                     </div>
 
                 </div>
@@ -1110,24 +1198,25 @@
                          data-bs-toggle="modal"
                          data-bs-target="#facilityModal"
                          data-name="{{ $facility->name }}"
-                         data-description="{{ $facility->description }}"
                          data-icon="{{ $facility->icon ?? 'bi bi-building' }}"
-                         data-image="{{ $facility->image ? asset('storage/' . $facility->image) : '' }}">
+                         data-image="{{ $facility->image ? asset('storage/' . $facility->image) : '' }}"
+                         data-index="{{ $loop->index }}">
+
+                        <template class="facility-desc">{!! \App\Models\Setting::cleanHtml($facility->description) !!}</template>
 
                         @if($facility->image)
-                            <img
-                                src="{{ asset('storage/' . $facility->image) }}"
-                                alt="{{ $facility->name }}"
-                                class="facility-img">
+                        <div class="facility-card-img">
+                            <img src="{{ asset('storage/' . $facility->image) }}" loading="lazy" alt="{{ $facility->name }}">
+                        </div>
                         @else
-                            <div class="facility-icon">
-                                <i class="{{ $facility->icon ?? 'bi bi-building' }}"></i>
-                            </div>
+                        <div class="facility-icon">
+                            <i class="{{ $facility->icon ?: 'bi bi-building' }}"></i>
+                        </div>
                         @endif
 
                         <h4>{{ $facility->name }}</h4>
 
-                        <p>{{ strip_tags($facility->description) }}</p>
+                        <p>{{ \Illuminate\Support\Str::limit(\App\Models\Setting::toPlainText($facility->description), 200) }}</p>
 
                         <button class="facility-detail-btn" type="button">
                             Lihat Detail <i class="bi bi-arrow-right ms-1"></i>
@@ -1185,7 +1274,7 @@
 
                         <div class="section-label mb-2">Fasilitas</div>
 
-                        <p id="facilityModalDesc" class="modal-desc" style="color:var(--gray);line-height:1.8;white-space:pre-line"></p>
+                        <div id="facilityModalDesc" class="modal-desc" style="color:var(--gray);line-height:1.8;word-break:break-word"></div>
 
                     </div>
 
@@ -1223,13 +1312,16 @@
                          data-bs-target="#alurModal"
                          data-nomor="{{ $loop->iteration }}"
                          data-name="{{ $program->name }}"
-                         data-description="{{ \App\Models\Setting::cleanHtml($program->description) }}">
+                         data-image="{{ $program->image ? asset('storage/' . $program->image) : '' }}"
+                         data-index="{{ $loop->index }}">
+
+                        <template class="program-desc">{!! \App\Models\Setting::cleanHtml($program->description) !!}</template>
 
                         <div class="alur-number">{{ $loop->iteration }}</div>
 
                         <h4>{{ $program->name }}</h4>
 
-                        <p>{{ strip_tags(str_replace('&nbsp;', ' ', $program->description)) }}</p>
+                        <p>{{ \App\Models\Setting::toPlainText($program->description) }}</p>
 
                         <button class="alur-detail-btn" type="button">
                             Selengkapnya <i class="bi bi-arrow-right ms-1"></i>
@@ -1257,16 +1349,21 @@
     <div class="modal fade" id="alurModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
-                <div class="modal-body p-4">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="alur-number mb-0" id="alurModalNomor" style="margin-bottom:0!important"></div>
-                            <h5 id="alurModalName" class="fw-bold mb-0"></h5>
-                        </div>
-                        <button type="button" class="btn-close ms-2" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                <div class="modal-body p-0">
+                    <div id="alurModalImg" class="d-none">
+                        <img id="alurModalImgEl" src="" alt="" style="width:100%; max-height:260px; object-fit:cover;">
                     </div>
-                    <div class="section-label mb-2">Alur Pendaftaran</div>
-                    <div id="alurModalDesc" style="color:var(--gray);line-height:1.8;font-size:15px"></div>
+                    <div class="p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="alur-number mb-0" id="alurModalNomor" style="margin-bottom:0!important"></div>
+                                <h5 id="alurModalName" class="fw-bold mb-0"></h5>
+                            </div>
+                            <button type="button" class="btn-close ms-2" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                        </div>
+                        <div class="section-label mb-2">Alur Pendaftaran</div>
+                        <div id="alurModalDesc" style="color:var(--gray);line-height:1.8;font-size:15px"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1403,6 +1500,7 @@
 
                         <img
                             src="{{ asset('storage/' . $graduate->photo) }}"
+                            loading="lazy"
                             alt="{{ $graduate->name }}">
 
                         @endif
@@ -1415,9 +1513,9 @@
                             {{ $graduate->display_position }}
                         </div>
 
-                        <p class="mt-3">
-                            {!! $graduate->description !!}
-                        </p>
+                        <div class="mt-3" style="color:var(--gray);font-size:14px;line-height:1.7">
+                            {{ \App\Models\Setting::toPlainText($graduate->description) }}
+                        </div>
 
                     </div>
 
@@ -1547,7 +1645,7 @@
                              aria-labelledby="faqHeading{{ $faq->id }}"
                              data-bs-parent="#faqAccordion">
                             <div class="accordion-body">
-                                {!! $faq->answer !!}
+                                {!! \App\Models\Setting::cleanHtml($faq->answer) !!}
                             </div>
                         </div>
 
@@ -1634,7 +1732,7 @@
                          data-description="{{ $gallery->description ?? '' }}"
                          data-image="{{ asset('storage/' . $gallery->image) }}">
 
-                        <img src="{{ asset('storage/' . $gallery->image) }}" alt="{{ $gallery->title }}">
+                        <img src="{{ asset('storage/' . $gallery->image) }}" loading="lazy" alt="{{ $gallery->title }}">
 
                         <div class="gallery-overlay">
                             <h5>{{ $gallery->title }}</h5>
@@ -1683,9 +1781,8 @@
 
                 <div class="col-lg-5">
 
-                    <h5>
-                        LPK KELAS JEPANG PANGANDARAN
-                    </h5>
+                    <img src="{{ asset('images/lpk-kelas-jepang-pangandaran.png') }}" alt="Logo LPK"
+                         style="height:70px;width:auto;object-fit:contain;margin-bottom:16px;display:block;filter:brightness(0) invert(1)">
 
                     <p>
                         Lembaga pendidikan dan pelatihan kerja yang
@@ -1747,17 +1844,33 @@
 
                         <li>
                             <i class="bi bi-geo-alt me-2"></i>
-                            {{ $setting->address ?? 'Alamat belum tersedia' }}
+                            {{ $setting->address ?: 'Alamat belum tersedia' }}
                         </li>
 
+                        @if($setting->phone)
+                        <li>
+                            <i class="bi bi-telephone me-2"></i>
+                            {{ $setting->phone }}
+                        </li>
+                        @endif
+
+                        @if($setting->whatsapp)
+                        <li>
+                            <a href="{{ $setting->whatsapp_link }}" target="_blank" rel="noopener noreferrer">
+                                <i class="bi bi-whatsapp me-2"></i>
+                                {{ $setting->whatsapp }}
+                            </a>
+                        </li>
+                        @elseif(!$setting->phone)
                         <li>
                             <i class="bi bi-whatsapp me-2"></i>
-                            {{ $setting->phone ?? '-' }}
+                            -
                         </li>
+                        @endif
 
                         <li>
                             <i class="bi bi-envelope me-2"></i>
-                            {{ $setting->email ?? '-' }}
+                            {{ $setting->email ?: '-' }}
                         </li>
 
                     </ul>
@@ -1789,6 +1902,20 @@
                 </div>
 
             </div>
+
+            @if($setting->maps_embed)
+            <div class="mt-4" style="border-radius:16px;overflow:hidden">
+                <iframe
+                    src="{{ $setting->maps_embed }}"
+                    width="100%"
+                    height="280"
+                    style="border:0;display:block"
+                    allowfullscreen=""
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+            @endif
 
 
             <div class="footer-bottom text-center">
@@ -1917,16 +2044,23 @@
         facilityModal.addEventListener('show.bs.modal', function (e) {
             const card  = e.relatedTarget;
             const name  = card.dataset.name;
-            const desc  = card.dataset.description;
-            const icon  = card.dataset.icon;
+            const icon  = card.dataset.icon || 'bi bi-building';
             const image = card.dataset.image;
 
-            document.getElementById('facilityModalName').textContent = name;
-            document.getElementById('facilityModalDesc').innerHTML = desc;
+            // Ambil HTML yang sudah disanitasi dari <template>
+            const raw  = card.querySelector('template.facility-desc')?.innerHTML ?? '';
+            const desc = raw.replace(/&nbsp;/g, ' ');
 
-            // icon
+            document.getElementById('facilityModalName').textContent = name;
+            document.getElementById('facilityModalDesc').innerHTML   = desc;
+
+            // icon (hindari innerHTML untuk mencegah DOM XSS)
             const iconEl = document.getElementById('facilityModalIcon');
-            iconEl.innerHTML = `<i class="${icon}" style="font-size:26px"></i>`;
+            iconEl.textContent = '';
+            const iTag = document.createElement('i');
+            iTag.className = icon.replace(/[^a-zA-Z0-9\s\-_]/g, '');
+            iTag.style.fontSize = '26px';
+            iconEl.appendChild(iTag);
 
             // gambar
             const imgWrapper = document.getElementById('facilityModalImg');
@@ -1945,10 +2079,24 @@
         // Isi modal alur pendaftaran
         const alurModal = document.getElementById('alurModal');
         alurModal?.addEventListener('show.bs.modal', function (e) {
-            const card = e.relatedTarget;
+            const card  = e.relatedTarget;
+            const raw   = card.querySelector('template.program-desc')?.innerHTML ?? '';
+            const desc  = raw.replace(/&nbsp;/g, ' ');
+            const image = card.dataset.image;
+
             document.getElementById('alurModalNomor').textContent = card.dataset.nomor;
             document.getElementById('alurModalName').textContent  = card.dataset.name;
-            document.getElementById('alurModalDesc').innerHTML    = card.dataset.description;
+            document.getElementById('alurModalDesc').innerHTML    = desc;
+
+            const imgWrapper = document.getElementById('alurModalImg');
+            const imgEl      = document.getElementById('alurModalImgEl');
+            if (image) {
+                imgEl.src = image;
+                imgEl.alt = card.dataset.name;
+                imgWrapper.classList.remove('d-none');
+            } else {
+                imgWrapper.classList.add('d-none');
+            }
         });
 
         // Isi modal galeri dengan data dari item yang diklik

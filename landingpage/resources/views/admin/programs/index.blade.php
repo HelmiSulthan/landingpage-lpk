@@ -29,7 +29,7 @@
                 <tbody>
                     @forelse($programs as $item)
                     <tr>
-                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $programs->firstItem() + $loop->index }}</td>
                         <td>{{ $item->name ?? '-' }}</td>
                         <td>{{ \Illuminate\Support\Str::limit(strip_tags(str_replace('&nbsp;', ' ', $item->description ?? '')), 80) }}</td>
                         <td>

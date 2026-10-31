@@ -20,7 +20,7 @@
             <table class="table table-hover align-middle mb-0">
                 <thead>
                     <tr>
-                        <th>Ikon</th>
+                        <th style="width:90px">Foto / Ikon</th>
                         <th>Nama</th>
                         <th>Deskripsi</th>
                         <th style="width:160px">Aksi</th>
@@ -29,9 +29,16 @@
                 <tbody>
                     @forelse($facilities as $item)
                     <tr>
-                        <td style="width:70px"><i class="{{ $item->icon ?: 'bi bi-building' }} fs-4"></i></td>
+                        <td>
+                            @if($item->image)
+                                <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}"
+                                     class="rounded" style="width:64px;height:48px;object-fit:cover">
+                            @else
+                                <i class="{{ $item->icon ?: 'bi bi-building' }} fs-4"></i>
+                            @endif
+                        </td>
                         <td>{{ $item->name ?? '-' }}</td>
-                        <td>{{ \Illuminate\Support\Str::limit($item->description, 80) }}</td>
+                        <td>{{ \Illuminate\Support\Str::limit(strip_tags(str_replace('&nbsp;', ' ', $item->description ?? '')), 80) }}</td>
                         <td>
                             <a href="{{ route('admin.facilities.edit', $item) }}" class="btn btn-sm btn-outline-primary">Edit</a>
 

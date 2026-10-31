@@ -60,6 +60,9 @@ class GraduateController extends Controller
         if ($request->hasFile('photo')) {
             $this->deleteImage($graduate->photo);
             $data['photo'] = $request->file('photo')->store('graduates', 'public');
+        } elseif ($request->boolean('remove_photo')) {
+            $this->deleteImage($graduate->photo);
+            $data['photo'] = null;
         }
 
         $graduate->update($data);

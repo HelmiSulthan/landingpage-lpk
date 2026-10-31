@@ -23,11 +23,14 @@
 </div>
 
 <div class="mb-3">
-    <label class="form-label" for="image">Gambar</label>
+    <label class="form-label" for="image">Gambar (opsional)</label>
 
     @if($item?->image)
-        <div class="mb-2">
+        <div class="mb-2 d-flex align-items-center gap-3">
             <img src="{{ asset('storage/' . $item->image) }}" alt="" style="max-height:120px" class="img-thumbnail">
+            <label class="d-flex align-items-center gap-1 text-danger small" style="cursor:pointer">
+                <input type="checkbox" name="remove_image" value="1"> Hapus foto
+            </label>
         </div>
     @endif
 

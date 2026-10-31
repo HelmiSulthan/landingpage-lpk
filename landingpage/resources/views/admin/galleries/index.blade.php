@@ -26,7 +26,7 @@
                     <div class="card-body">
                         <h6 class="card-title mb-1">{{ $item->title }}</h6>
                         @if($item->description)
-                        <p class="text-muted small mb-2">{{ \Illuminate\Support\Str::limit($item->description, 60) }}</p>
+                        <p class="text-muted small mb-2">{{ \Illuminate\Support\Str::limit(strip_tags(str_replace('&nbsp;', ' ', $item->description ?? '')), 60) }}</p>
                         @endif
                         <div class="d-flex gap-2">
                             <a href="{{ route('admin.galleries.edit', $item) }}" class="btn btn-sm btn-outline-primary">Edit</a>

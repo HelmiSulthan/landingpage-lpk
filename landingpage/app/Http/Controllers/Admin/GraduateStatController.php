@@ -8,6 +8,7 @@ use App\Models\GraduateStat;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
@@ -36,43 +37,78 @@ class GraduateStatController extends Controller
             'excel' => 'required|file|mimes:xlsx,xls,csv|max:5120',
         ]);
 
-        $path        = $request->file('excel')->getRealPath();
-        $spreadsheet = IOFactory::load($path);
-        $sheet       = $spreadsheet->getActiveSheet();
-        $rows        = $sheet->toArray(null, true, true, true);
+        try {
+            $path        = $request->file('excel')->getRealPath();
+            $spreadsheet = IOFactory::load($path);
+            $sheet       = $spreadsheet->getActiveSheet();
+            $rows        = $sheet->toArray(null, true, true, true);
+        } catch (\Throwable $e) {
+            return redirect()
+                ->route('admin.graduate-stats.index')
+                ->with('error', 'Gagal membaca file Excel. Pastikan file valid dan tidak korup.');
+        }
 
-        $inserted = 0;
-        $errors   = [];
-
-        // Hapus data lama sebelum import baru
-        GraduateStat::truncate();
+        $rowsToInsert = [];
+        $errors       = [];
+        $inserted     = 0;
 
         foreach ($rows as $rowNum => $row) {
-            // Skip header
-            if ($rowNum === 1) continue;
+            if ($rowNum === 1) {
+                continue; // Skip header
+            }
 
             $category = trim($row['A'] ?? '');
             $label    = trim($row['B'] ?? '');
-            $total    = intval($row['C'] ?? 0);
+            $rawTotal = trim($row['C'] ?? '');
 
-            if (empty($category) || empty($label)) continue;
+            // Lewati baris yang benar-benar kosong
+            if ($category === '' && $label === '' && $rawTotal === '') {
+                continue;
+            }
 
-            GraduateStat::create([
-                'category' => $category,
-                'label'    => $label,
-                'total'    => $total,
-            ]);
+            if ($category === '' || $label === '') {
+                $errors[] = "Baris {$rowNum}: kategori/label kosong, dilewati.";
+                continue;
+            }
 
+            if ($rawTotal !== '' && ! is_numeric($rawTotal)) {
+                $errors[] = "Baris {$rowNum}: total \"{$rawTotal}\" bukan angka, disimpan sebagai 0.";
+            }
+
+            $rowsToInsert[] = [
+                'category'   => $category,
+                'label'      => $label,
+                'total'      => is_numeric($rawTotal) ? (int) $rawTotal : 0,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
             $inserted++;
         }
+
+        if (empty($rowsToInsert)) {
+            return redirect()
+                ->route('admin.graduate-stats.index')
+                ->with('error', 'Tidak ada data valid yang ditemukan di file Excel.');
+        }
+
+        DB::transaction(function () use ($rowsToInsert) {
+            // DELETE (transaksional) bukan TRUNCATE (DDL yang tidak bisa di-rollback di MySQL)
+            GraduateStat::query()->delete();
+            GraduateStat::insert($rowsToInsert);
+        });
 
         Cache::forget('landing.graduate_stats');
 
         ActivityLog::record('create', 'Statistik Lulusan', "Import Excel: {$inserted} data berhasil diimpor");
 
+        $message = "{$inserted} data statistik berhasil diimpor dari Excel.";
+        if ($errors) {
+            $message .= ' Peringatan: ' . implode(' ', $errors);
+        }
+
         return redirect()
             ->route('admin.graduate-stats.index')
-            ->with('success', "{$inserted} data statistik berhasil diimpor dari Excel.");
+            ->with('success', $message);
     }
 
     public function destroy(): RedirectResponse
@@ -126,11 +162,10 @@ class GraduateStatController extends Controller
         $writer   = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
         $filename = 'template_statistik_lulusan.xlsx';
 
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header("Content-Disposition: attachment; filename=\"{$filename}\"");
-        header('Cache-Control: max-age=0');
-
-        $writer->save('php://output');
-        exit;
+        return response()->streamDownload(function () use ($writer) {
+            $writer->save('php://output');
+        }, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
     }
 }

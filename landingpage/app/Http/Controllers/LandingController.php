@@ -40,23 +40,23 @@ class LandingController extends Controller
         });
 
         $facilities = Cache::remember('landing.facilities', 3600, function () {
-            return Facility::latest()->get();
+            return Facility::latest()->limit(24)->get();
         });
 
         $programs = Cache::remember('landing.programs', 3600, function () {
-            return Program::latest()->get();
+            return Program::oldest()->get();
         });
 
         $graduates = Cache::remember('landing.graduates', 3600, function () {
-            return Graduate::latest()->get();
+            return Graduate::latest()->limit(30)->get();
         });
 
         $faqs = Cache::remember('landing.faqs', 3600, function () {
-            return Faq::latest()->get();
+            return Faq::oldest()->get();
         });
 
         $galleries = Cache::remember('landing.galleries', 3600, function () {
-            return Gallery::latest()->get();
+            return Gallery::latest()->limit(24)->get();
         });
 
         $heroImages = Cache::remember('landing.hero_images', 3600, function () {

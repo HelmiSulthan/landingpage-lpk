@@ -7,22 +7,20 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Kolom graduates_gdrive_link sebelumnya string(255) sementara validasi
+     * mengizinkan max:500. Perpanjang agar URL panjang tidak gagal insert.
      */
     public function up(): void
     {
         Schema::table('settings', function (Blueprint $table) {
-            //
+            $table->string('graduates_gdrive_link', 500)->nullable()->change();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('settings', function (Blueprint $table) {
-            //
+            $table->string('graduates_gdrive_link', 255)->nullable()->change();
         });
     }
 };

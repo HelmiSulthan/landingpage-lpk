@@ -7,9 +7,14 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Tabel leaders tidak pernah dipakai (data atasan disimpan di tabel settings).
      */
     public function up(): void
+    {
+        Schema::dropIfExists('leaders');
+    }
+
+    public function down(): void
     {
         Schema::create('leaders', function (Blueprint $table) {
             $table->id();
@@ -18,13 +23,5 @@ return new class extends Migration
             $table->string('photo')->nullable();
             $table->timestamps();
         });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('leaders');
     }
 };

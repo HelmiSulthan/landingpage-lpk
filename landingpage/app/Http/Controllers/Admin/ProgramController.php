@@ -17,7 +17,7 @@ class ProgramController extends Controller
 
     public function index(): View
     {
-        $programs = Program::latest()->paginate(10);
+        $programs = Program::oldest()->paginate(10);
 
         return view('admin.programs.index', compact('programs'));
     }
@@ -58,6 +58,9 @@ class ProgramController extends Controller
         if ($request->hasFile('image')) {
             $this->deleteImage($program->image);
             $data['image'] = $request->file('image')->store('programs', 'public');
+        } elseif ($request->boolean('remove_image')) {
+            $this->deleteImage($program->image);
+            $data['image'] = null;
         }
 
         $program->update($data);

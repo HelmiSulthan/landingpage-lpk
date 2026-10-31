@@ -47,14 +47,27 @@ class SettingController extends Controller
             'japan_count'           => 'nullable|integer',
             'experience_years'      => 'nullable|integer',
             'graduates_gdrive_link' => 'nullable|url|max:500',
+            'maps_embed'            => 'nullable|string|max:2000',
         ]);
+
+        if ($request->filled('maps_embed')) {
+            $sanitizedMap = Setting::sanitizeMapsEmbed($request->input('maps_embed'));
+            if (! $sanitizedMap) {
+                return back()
+                    ->withErrors(['maps_embed' => 'URL Google Maps Embed tidak valid. Gunakan URL dari fitur Sematkan Peta Google Maps.'])
+                    ->withInput();
+            }
+            $data['maps_embed'] = $sanitizedMap;
+        } else {
+            $data['maps_embed'] = null;
+        }
 
         $setting = Setting::firstOrNew([]);
 
         // Upload foto atasan jika ada
         if ($request->hasFile('leader_photo')) {
             $this->deleteImage($setting->leader_photo);
-            $data['leader_photo'] = $request->file('leader_photo')->store('leaders', 'public');
+            $data['leader_photo'] = $request->file('leader_photo')->store('settings', 'public');
         } else {
             unset($data['leader_photo']);
         }
@@ -79,7 +92,7 @@ class SettingController extends Controller
     public function storeHeroImage(Request $request): RedirectResponse
     {
         $request->validate([
-            'images'   => 'required|array|min:1',
+            'images'   => 'required|array|min:1|max:10',
             'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:4096',
         ]);
 

@@ -30,7 +30,31 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'is_admin' => true,
+            'role' => 'admin',
         ];
+    }
+
+    /**
+     * State untuk Super Admin.
+     */
+    public function superAdmin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_admin' => true,
+            'role' => 'super_admin',
+        ]);
+    }
+
+    /**
+     * State untuk user non-admin.
+     */
+    public function nonAdmin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_admin' => false,
+            'role' => 'admin',
+        ]);
     }
 
     /**

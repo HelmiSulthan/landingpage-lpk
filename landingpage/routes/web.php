@@ -11,15 +11,44 @@ use App\Http\Controllers\Admin\GraduateStatController;
 use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\ActivityLogController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\ProfileController;
 
 // Landing page publik
 Route::get('/', [LandingController::class, 'index']);
 
+// Fallback penyajian file storage jika hosting tidak mendukung symlink atau storage:link belum dibuat
+Route::get('/storage/{path}', function (string $path) {
+    $basePath = realpath(storage_path('app/public'));
+    if (! $basePath) {
+        abort(404);
+    }
+
+    $normalizedPath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $path);
+    $filePath = realpath($basePath . DIRECTORY_SEPARATOR . $normalizedPath);
+
+    if (! $filePath || ! str_starts_with($filePath, $basePath . DIRECTORY_SEPARATOR) || ! is_file($filePath)) {
+        abort(404);
+    }
+
+    return response()->file($filePath, [
+        'Cache-Control' => 'public, max-age=31536000',
+    ]);
+})->where('path', '.*')->name('storage.fallback');
+
 // Semua halaman di bawah ini khusus admin yang sudah login
 Route::middleware(['auth', 'admin'])
     ->prefix('admin')
     ->group(function () {
+
+        Route::post('/link-storage', function () {
+            try {
+                \Illuminate\Support\Facades\Artisan::call('storage:link', ['--force' => true]);
+                return back()->with('success', 'Symbolic link storage berhasil dibuat!');
+            } catch (\Throwable $e) {
+                return back()->with('error', 'Gagal membuat storage link: ' . $e->getMessage());
+            }
+        })->name('admin.storage.link');
 
         Route::get('/dashboard', [
             DashboardController::class,
@@ -71,6 +100,13 @@ Route::middleware(['auth', 'admin'])
 
         Route::get('/activity-logs', [ActivityLogController::class, 'index'])
             ->name('admin.activity-logs.index');
+
+        // Hanya super admin yang bisa kelola user
+        Route::middleware('super_admin')->group(function () {
+            Route::resource('users', UserController::class)
+                ->except('show')
+                ->names('admin.users');
+        });
 
         Route::get('/profile', [ProfileController::class, 'edit'])
             ->name('profile.edit');

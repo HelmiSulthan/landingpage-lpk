@@ -40,8 +40,11 @@
     <label class="form-label" for="photo">Foto</label>
 
     @if($item?->photo)
-        <div class="mb-2">
+        <div class="mb-2 d-flex align-items-center gap-3">
             <img src="{{ asset('storage/' . $item->photo) }}" alt="" style="max-height:120px" class="img-thumbnail">
+            <label class="d-flex align-items-center gap-1 text-danger small" style="cursor:pointer">
+                <input type="checkbox" name="remove_photo" value="1"> Hapus foto
+            </label>
         </div>
     @endif
 
